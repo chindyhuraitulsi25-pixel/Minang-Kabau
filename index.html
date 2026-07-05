@@ -1,0 +1,1978 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Explore Minangkabau</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <style>
+    :root{
+      --bg:#f5f5f5;--surface:#fff;--text:#333;--text-muted:#666;
+      --border:#eee;--card-shadow:0 10px 20px rgba(0,0,0,.15);
+      --input-bg:#fafafa;--primary:#7b1113;--gold:#ffb703;
+      --fact-bg:linear-gradient(to right,#7b1113,#a4161a);
+      --nav-bg:#7b1113;--footer-bg:#7b1113;
+    }
+    [data-theme="dark"]{
+      --bg:#121212;--surface:#1e1e1e;--text:#e8e8e8;--text-muted:#aaa;
+      --border:#333;--card-shadow:0 10px 20px rgba(0,0,0,.5);
+      --input-bg:#2a2a2a;--primary:#c9292c;--gold:#ffb703;
+      --fact-bg:linear-gradient(to right,#3d0a0b,#6b1214);
+      --nav-bg:#1a0405;--footer-bg:#1a0405;
+    }
+    *{margin:0;padding:0;box-sizing:border-box;scroll-behavior:smooth;}
+    body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden;transition:background .4s,color .4s;}
+    #mainWebsiteWrapper{display:none;}
+
+    #progress-bar{position:fixed;top:0;left:0;height:4px;background:linear-gradient(to right,#7b1113,#ffb703);z-index:99999;width:0%;transition:width .1s;}
+
+    #loader{position:fixed;width:100%;height:100vh;background:#7b1113;display:flex;justify-content:center;align-items:center;z-index:9999;color:white;flex-direction:column;}
+    .loader-circle{width:70px;height:70px;border:8px solid rgba(255,255,255,.3);border-top:8px solid #ffb703;border-radius:50%;animation:spin 1s linear infinite;margin-bottom:20px;}
+    @keyframes spin{100%{transform:rotate(360deg);}}
+
+    #authGatekeeper{position:fixed;inset:0;background:linear-gradient(rgba(0,0,0,.7),rgba(0,0,0,.7)),url('img/header.jpg') center/cover;z-index:9995;display:none;align-items:center;justify-content:center;padding:20px;}
+    .gate-card{background:var(--surface);width:100%;max-width:420px;padding:45px 38px;border-radius:28px;box-shadow:0 40px 80px rgba(0,0,0,.4);animation:fadeDown .4s ease;}
+    .gate-brand{text-align:center;margin-bottom:28px;}
+    .gate-brand .gate-icon{width:72px;height:72px;background:linear-gradient(135deg,#7b1113,#ffb703);border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:32px;margin:0 auto 14px;}
+    .gate-brand h2{color:var(--primary);font-size:22px;font-weight:700;}
+    .gate-brand p{color:var(--text-muted);font-size:13px;margin-top:4px;}
+    .gate-tabs{display:flex;gap:0;background:var(--border);border-radius:14px;padding:4px;margin-bottom:28px;}
+    .gate-tab{flex:1;padding:10px;border:none;border-radius:11px;background:none;font-family:'Poppins',sans-serif;font-size:13px;font-weight:600;cursor:pointer;color:var(--text-muted);transition:.3s;}
+    .gate-tab.active{background:var(--primary);color:white;box-shadow:0 4px 12px rgba(123,17,19,.3);}
+    .gate-input-group{display:flex;flex-direction:column;gap:14px;margin-bottom:20px;}
+    .gate-input-wrap{position:relative;}
+    .gate-input-wrap i{position:absolute;left:15px;top:50%;transform:translateY(-50%);color:#aaa;font-size:14px;}
+    .gate-input-wrap input{width:100%;padding:13px 15px 13px 42px;border:2px solid var(--border);border-radius:12px;font-family:'Poppins',sans-serif;font-size:14px;color:var(--text);background:var(--input-bg);outline:none;transition:.3s;}
+    .gate-input-wrap input:focus{border-color:#7b1113;box-shadow:0 0 0 3px rgba(123,17,19,.1);}
+    .gate-submit{width:100%;padding:14px;background:linear-gradient(135deg,#7b1113,#a4161a);color:white;border:none;border-radius:12px;font-family:'Poppins',sans-serif;font-size:15px;font-weight:700;cursor:pointer;transition:.4s;margin-top:5px;}
+    .gate-submit:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(123,17,19,.4);}
+    .gate-alert{padding:11px 15px;border-radius:10px;font-size:13px;margin-bottom:15px;display:none;align-items:center;gap:9px;}
+    .gate-alert.error{background:#fff0f0;border-left:3px solid #e53935;color:#c62828;display:flex;}
+    .gate-alert.success{background:#f0fff4;border-left:3px solid #43a047;color:#2e7d32;display:flex;}
+
+    header{width:100%;height:100vh;position:relative;display:flex;justify-content:center;align-items:center;text-align:center;color:white;padding:20px;overflow:hidden;}
+    .hero-bg{position:absolute;inset:0;background:linear-gradient(rgba(0,0,0,.55),rgba(0,0,0,.55)),url('img/header.jpg') center/cover;z-index:0;}
+    #particles-canvas{position:absolute;inset:0;z-index:1;pointer-events:none;}
+    .hero{position:relative;z-index:2;}
+    .hero h1{font-size:75px;margin-bottom:20px;animation:fadeDown 1.5s;text-shadow:0 4px 30px rgba(0,0,0,.5);}
+    .hero p{max-width:900px;margin:auto;line-height:2;margin-bottom:30px;animation:fadeUp 1.5s;}
+    .hero-btns{display:flex;gap:15px;justify-content:center;flex-wrap:wrap;}
+    .hero button{padding:15px 35px;border:none;border-radius:40px;background:#ffb703;font-size:16px;font-weight:600;cursor:pointer;transition:.4s;font-family:'Poppins',sans-serif;}
+    .hero button:hover{background:white;transform:scale(1.07);}
+    .hero button.btn-outline{background:transparent;border:2px solid white;color:white;}
+    .hero button.btn-outline:hover{background:white;color:#7b1113;}
+    @keyframes fadeDown{from{opacity:0;transform:translateY(-40px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes fadeUp  {from{opacity:0;transform:translateY(40px)} to{opacity:1;transform:translateY(0)}}
+
+    .stats-strip{background:linear-gradient(135deg,#7b1113,#a4161a);padding:40px 8%;display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:30px;text-align:center;color:white;}
+    .stat-item .stat-num{font-size:42px;font-weight:700;color:#ffb703;display:block;}
+    .stat-item .stat-label{font-size:13px;opacity:.85;margin-top:5px;}
+
+    nav{background:var(--nav-bg);padding:12px 20px;display:flex;justify-content:center;flex-wrap:wrap;gap:8px;position:sticky;top:0;z-index:1000;transition:background .4s;}
+    nav button{padding:10px 18px;border:none;border-radius:30px;background:white;color:#7b1113;font-family:'Poppins',sans-serif;font-weight:600;cursor:pointer;transition:.4s;font-size:13px;}
+    nav button:hover{background:#ffb703;transform:translateY(-3px);}
+    nav button.quiz-btn{background:#1a237e;color:white;}
+    nav button.quiz-btn:hover{background:#3949ab;}
+    @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(255,183,3,.5)}50%{box-shadow:0 0 0 8px rgba(255,183,3,0)}}
+
+    .search-wrap{display:flex;align-items:center;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);border-radius:30px;padding:6px 16px;gap:8px;}
+    .search-wrap input{background:none;border:none;outline:none;color:white;font-family:'Poppins',sans-serif;font-size:13px;width:140px;}
+    .search-wrap input::placeholder{color:rgba(255,255,255,.6);}
+    .search-wrap i{color:rgba(255,255,255,.7);font-size:13px;}
+    #searchResults{position:absolute;top:calc(100% + 8px);right:0;background:var(--surface);border-radius:16px;box-shadow:0 15px 45px rgba(0,0,0,.2);width:260px;overflow:hidden;display:none;z-index:1001;}
+    .search-result-item{padding:12px 18px;cursor:pointer;font-size:13px;color:var(--text);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;transition:.2s;}
+    .search-result-item:hover{background:var(--input-bg);color:var(--primary);}
+    .search-result-item i{color:var(--primary);font-size:12px;}
+    .search-container{position:relative;}
+
+    .user-badge{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);border-radius:30px;padding:7px 14px;color:white;font-size:13px;font-weight:500;position:relative;cursor:pointer;}
+    .user-avatar{width:28px;height:28px;border-radius:50%;background:#ffb703;color:#7b1113;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0;overflow:hidden;}
+    .user-avatar img{width:100%;height:100%;object-fit:cover;}
+    .user-dropdown{position:absolute;top:calc(100% + 10px);right:0;background:var(--surface);border-radius:16px;min-width:230px;box-shadow:0 15px 45px rgba(0,0,0,.2);padding:8px 0;display:none;z-index:1002;overflow:hidden;}
+    .user-badge:hover .user-dropdown{display:block;}
+    .dropdown-header{padding:14px 18px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;}
+    .dropdown-avatar{width:36px;height:36px;border-radius:50%;background:#ffb703;color:#7b1113;display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0;overflow:hidden;cursor:pointer;position:relative;}
+    .dropdown-avatar img{width:100%;height:100%;object-fit:cover;}
+    .dropdown-avatar .avatar-edit{position:absolute;inset:0;background:rgba(0,0,0,.5);color:white;display:none;align-items:center;justify-content:center;font-size:11px;}
+    .dropdown-avatar:hover .avatar-edit{display:flex;}
+    .dropdown-header .d-name{font-weight:700;color:var(--text);font-size:14px;}
+    .dropdown-header .d-email{font-size:12px;color:var(--text-muted);margin-top:2px;}
+    .dropdown-item{display:flex;align-items:center;gap:10px;padding:11px 18px;color:var(--text-muted);font-size:13px;cursor:pointer;transition:.2s;border:none;background:none;width:100%;font-family:'Poppins',sans-serif;}
+    .dropdown-item:hover{background:var(--input-bg);color:var(--primary);}
+    .dropdown-item.logout{color:#e53935;}
+    .dropdown-item.logout:hover{background:#fff0f0;}
+
+    .dark-toggle{position:fixed;top:80px;right:20px;background:var(--surface);border:2px solid var(--border);border-radius:30px;padding:8px 14px;cursor:pointer;z-index:998;font-size:18px;box-shadow:0 4px 15px rgba(0,0,0,.15);transition:.3s;display:flex;align-items:center;gap:8px;color:var(--text);}
+    .dark-toggle:hover{transform:scale(1.05);}
+    .dark-toggle span{font-size:12px;font-weight:600;}
+
+    section{display:none;padding:80px 8%;animation:fade 1s ease;}
+    section.active{display:block;}
+    @keyframes fade{from{opacity:0}to{opacity:1}}
+    .title{text-align:center;margin-bottom:60px;}
+    .title h2{font-size:50px;color:var(--primary);margin-bottom:15px;}
+    .title p{color:var(--text-muted);}
+
+    .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:35px;}
+    .card{background:var(--surface);border-radius:25px;overflow:hidden;box-shadow:var(--card-shadow);transition:.5s;position:relative;}
+    .card:hover{transform:translateY(-10px) scale(1.02);}
+    .card img,.card video{width:100%;height:250px;object-fit:cover;border:none;display:block;background:var(--input-bg);}
+    .card-content{padding:25px;}
+    .card-content h3{color:var(--primary);margin-bottom:15px;}
+    .card-content p{color:var(--text-muted);line-height:1.8;}
+    .bookmark-btn{position:absolute;top:15px;right:15px;background:rgba(255,255,255,.9);border:none;border-radius:50%;width:40px;height:40px;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.3s;box-shadow:0 2px 8px rgba(0,0,0,.2);}
+    .bookmark-btn:hover{background:#ffb703;transform:scale(1.1);}
+    .bookmark-btn.saved{background:#ffb703;color:#7b1113;}
+    .img-skeleton{width:100%;height:250px;background:linear-gradient(90deg,var(--border) 25%,var(--surface) 50%,var(--border) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;position:absolute;inset:0;}
+    @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+    #toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%) translateY(20px);background:#333;color:white;padding:12px 25px;border-radius:30px;font-size:14px;font-weight:500;opacity:0;transition:.4s;z-index:9999;white-space:nowrap;pointer-events:none;}
+    #toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+    .fact-box{background:var(--fact-bg);color:white;padding:50px;margin:60px 0;border-radius:25px;text-align:center;}
+    .fact-box h2{margin-bottom:20px;font-size:40px;}
+    .fact-box p{line-height:2;}
+
+    .timeline{position:relative;padding:20px 0;margin-top:30px;}
+    .timeline::before{content:'';position:absolute;left:50%;top:0;bottom:0;width:4px;background:linear-gradient(to bottom,#7b1113,#ffb703);transform:translateX(-50%);border-radius:4px;}
+    .timeline-item{display:flex;justify-content:flex-end;padding-right:calc(50% + 40px);margin-bottom:40px;position:relative;}
+    .timeline-item:nth-child(even){justify-content:flex-start;padding-right:0;padding-left:calc(50% + 40px);}
+    .timeline-dot{position:absolute;left:50%;top:20px;transform:translateX(-50%);width:18px;height:18px;background:#ffb703;border:4px solid #7b1113;border-radius:50%;z-index:1;}
+    .timeline-card{background:var(--surface);border-radius:18px;padding:25px 30px;box-shadow:var(--card-shadow);max-width:420px;border-left:4px solid #7b1113;transition:.3s;}
+    .timeline-item:nth-child(even) .timeline-card{border-left:none;border-right:4px solid #ffb703;}
+    .timeline-card:hover{transform:scale(1.02);}
+    .timeline-card .year{font-size:13px;font-weight:700;color:#ffb703;background:#7b1113;display:inline-block;padding:3px 12px;border-radius:20px;margin-bottom:10px;}
+    .timeline-card h4{color:var(--primary);margin-bottom:8px;font-size:16px;}
+    .timeline-card p{color:var(--text-muted);font-size:14px;line-height:1.7;}
+
+    .gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px;margin-top:50px;}
+    .gallery-item{position:relative;border-radius:20px;overflow:hidden;cursor:pointer;height:250px;}
+    .gallery-item img{width:100%;height:100%;object-fit:cover;transition:.5s;display:block;}
+    .gallery-item:hover img{transform:scale(1.08);}
+    .gallery-overlay{position:absolute;inset:0;background:linear-gradient(transparent 50%,rgba(0,0,0,.7));display:flex;align-items:flex-end;padding:15px;opacity:0;transition:.3s;}
+    .gallery-item:hover .gallery-overlay{opacity:1;}
+    .gallery-overlay span{color:white;font-size:13px;font-weight:600;}
+    .gallery-toolbar{display:flex;justify-content:center;gap:12px;margin-bottom:10px;flex-wrap:wrap;}
+    .gallery-toolbar button{padding:9px 20px;border-radius:30px;border:2px solid var(--border);background:var(--surface);color:var(--text);font-family:'Poppins',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:.3s;}
+    .gallery-toolbar button:hover,.gallery-toolbar button.active{background:var(--primary);color:white;border-color:var(--primary);}
+
+    #lightbox{position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:99998;display:none;align-items:center;justify-content:center;flex-direction:column;}
+    #lightbox.open{display:flex;}
+    #lightbox img{max-width:90vw;max-height:78vh;border-radius:16px;animation:fadeDown .3s;}
+    #lightbox .lb-close{position:absolute;top:20px;right:30px;color:white;font-size:36px;cursor:pointer;opacity:.8;transition:.3s;}
+    #lightbox .lb-close:hover{opacity:1;transform:scale(1.1);}
+    #lightbox .lb-caption{color:white;margin-top:15px;font-size:14px;opacity:.7;}
+    #lightbox .lb-nav{display:flex;gap:20px;margin-top:15px;align-items:center;}
+    #lightbox .lb-nav button{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);color:white;padding:10px 25px;border-radius:30px;cursor:pointer;font-family:'Poppins',sans-serif;transition:.3s;font-size:14px;}
+    #lightbox .lb-nav button:hover{background:rgba(255,183,3,.4);}
+    #lightbox .lb-play{background:rgba(255,183,3,.3) !important;}
+
+    .weather-widget{background:linear-gradient(135deg,#1565c0,#1976d2,#42a5f5);border-radius:20px;padding:25px 30px;color:white;margin-bottom:40px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:20px;}
+    .weather-left{display:flex;align-items:center;gap:15px;}
+    .weather-icon{font-size:50px;}
+    .weather-info h4{font-size:18px;font-weight:700;}
+    .weather-right{text-align:right;}
+    .weather-temp{font-size:52px;font-weight:700;line-height:1;}
+    .weather-extras{display:flex;gap:20px;flex-wrap:wrap;margin-top:15px;width:100%;}
+    .weather-extra-item{display:flex;align-items:center;gap:8px;font-size:13px;opacity:.9;}
+
+    #quiz{padding:80px 8%;}
+    .quiz-container{background:var(--surface);border-radius:30px;padding:50px;box-shadow:var(--card-shadow);max-width:750px;margin:auto;}
+    .quiz-hero{background:linear-gradient(135deg,#1a237e,#283593,#3949ab);border-radius:20px;padding:40px;text-align:center;color:white;margin-bottom:40px;}
+    .quiz-hero h2{font-size:32px;margin-bottom:10px;}
+    .quiz-progress-wrap{margin-bottom:30px;}
+    .quiz-progress-label{display:flex;justify-content:space-between;font-size:13px;font-weight:600;color:var(--text-muted);margin-bottom:8px;}
+    .quiz-progress-bar{height:8px;background:var(--border);border-radius:8px;overflow:hidden;}
+    .quiz-progress-fill{height:100%;background:linear-gradient(to right,#7b1113,#ffb703);border-radius:8px;transition:width .5s ease;}
+    .quiz-question{font-size:20px;font-weight:600;color:var(--text);margin-bottom:25px;line-height:1.5;}
+    .quiz-options{display:grid;gap:12px;margin-bottom:25px;}
+    .quiz-option{padding:16px 22px;border:2px solid var(--border);border-radius:14px;cursor:pointer;font-family:'Poppins',sans-serif;font-size:14px;font-weight:500;color:var(--text);background:var(--input-bg);text-align:left;transition:.3s;}
+    .quiz-option:hover:not(:disabled){border-color:#7b1113;color:#7b1113;background:#fff5f5;}
+    .quiz-option.correct{background:#e8f5e9;border-color:#43a047;color:#2e7d32;}
+    .quiz-option.wrong{background:#ffebee;border-color:#e53935;color:#c62828;}
+    .quiz-option:disabled{cursor:default;}
+    .quiz-feedback{padding:15px 20px;border-radius:12px;font-size:14px;font-weight:500;margin-bottom:20px;display:none;}
+    .quiz-feedback.correct{background:#e8f5e9;color:#2e7d32;border-left:4px solid #43a047;display:block;}
+    .quiz-feedback.wrong{background:#ffebee;color:#c62828;border-left:4px solid #e53935;display:block;}
+    .quiz-btn{width:100%;padding:16px;background:linear-gradient(135deg,#7b1113,#a4161a);color:white;border:none;border-radius:14px;font-family:'Poppins',sans-serif;font-size:15px;font-weight:700;cursor:pointer;transition:.4s;}
+    .quiz-btn:hover{transform:translateY(-2px);box-shadow:0 10px 25px rgba(123,17,19,.35);}
+    .quiz-btn:disabled{opacity:.5;cursor:not-allowed;transform:none;}
+    .quiz-result{text-align:center;padding:20px 0;}
+    .score-circle{width:130px;height:130px;border-radius:50%;background:linear-gradient(135deg,#7b1113,#ffb703);display:flex;align-items:center;justify-content:center;flex-direction:column;margin:0 auto 25px;color:white;}
+    .score-num{font-size:40px;font-weight:700;line-height:1;}
+    .score-label{font-size:12px;opacity:.85;}
+    .quiz-result h3{font-size:24px;color:var(--primary);margin-bottom:10px;}
+    .quiz-result p{color:var(--text-muted);margin-bottom:20px;}
+
+    /* LEADERBOARD */
+    .leaderboard-box{background:var(--input-bg);border-radius:18px;padding:25px;margin-top:25px;}
+    .leaderboard-box h4{color:var(--primary);font-size:15px;margin-bottom:15px;display:flex;align-items:center;gap:8px;}
+    .lb-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);font-size:13px;}
+    .lb-row:last-child{border-bottom:none;}
+    .lb-rank{width:26px;height:26px;border-radius:50%;background:var(--surface);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:11px;color:var(--text-muted);flex-shrink:0;}
+    .lb-row.top1 .lb-rank{background:#ffd700;color:#7b1113;}
+    .lb-row.top2 .lb-rank{background:#c0c0c0;color:#333;}
+    .lb-row.top3 .lb-rank{background:#cd7f32;color:white;}
+    .lb-name{flex:1;font-weight:600;color:var(--text);}
+    .lb-score{font-weight:700;color:var(--primary);}
+    .lb-row.me{background:rgba(123,17,19,.06);border-radius:10px;padding:10px 8px;}
+
+    #flashcard{padding:80px 8%;}
+    .flashcard-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:25px;margin-top:30px;}
+    .flashcard{height:160px;perspective:800px;cursor:pointer;}
+    .flashcard-inner{position:relative;width:100%;height:100%;transform-style:preserve-3d;transition:transform .6s cubic-bezier(.4,0,.2,1);}
+    .flashcard:hover .flashcard-inner,.flashcard.flipped .flashcard-inner{transform:rotateY(180deg);}
+    .flashcard-front,.flashcard-back{position:absolute;inset:0;border-radius:20px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:10px;padding:20px;backface-visibility:hidden;-webkit-backface-visibility:hidden;}
+    .flashcard-front{background:linear-gradient(135deg,#7b1113,#a4161a);color:white;box-shadow:var(--card-shadow);}
+    .flashcard-back{background:linear-gradient(135deg,#ffb703,#e09c00);color:#333;transform:rotateY(180deg);box-shadow:var(--card-shadow);}
+    .flashcard-front .fc-minang{font-size:28px;font-weight:700;}
+    .flashcard-front .fc-hint{font-size:11px;opacity:.7;text-transform:uppercase;letter-spacing:1px;}
+    .flashcard-back .fc-indo{font-size:18px;font-weight:700;}
+    .flashcard-back .fc-eng{font-size:13px;opacity:.75;font-style:italic;}
+    .flashcard-back .fc-hint{font-size:11px;opacity:.6;text-transform:uppercase;letter-spacing:1px;margin-top:5px;}
+    .fc-tip{text-align:center;color:var(--text-muted);font-size:13px;margin-top:20px;}
+    .fc-tip i{color:var(--primary);}
+
+    #map-section{padding:80px 8%;}
+    .map-wrapper{background:var(--surface);border-radius:25px;box-shadow:var(--card-shadow);overflow:hidden;}
+    .map-header{background:linear-gradient(135deg,#7b1113,#a4161a);padding:25px 35px;color:white;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:15px;}
+    .map-header h3{font-size:20px;font-weight:700;display:flex;align-items:center;gap:10px;}
+    .map-legend{display:flex;gap:20px;flex-wrap:wrap;}
+    .legend-item{display:flex;align-items:center;gap:7px;font-size:12px;}
+    .legend-dot{width:10px;height:10px;border-radius:50%;}
+    .map-body{display:grid;grid-template-columns:1fr 320px;}
+    .map-placeholder{background:linear-gradient(135deg,#c8e6c9,#a5d6a7);width:100%;height:100%;display:flex;align-items:center;justify-content:center;position:relative;min-height:450px;}
+    .map-point{position:absolute;transform:translate(-50%,-50%);cursor:pointer;z-index:2;}
+    .map-pin{width:40px;height:40px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 15px rgba(0,0,0,.3);transition:.3s;}
+    .map-pin:hover{transform:rotate(-45deg) scale(1.2);}
+    .map-pin i{transform:rotate(45deg);color:white;font-size:16px;}
+    .map-pin.red{background:#7b1113;}
+    .map-pin.blue{background:#1565c0;}
+    .map-pin.green{background:#2e7d32;}
+    .map-pin.orange{background:#e65100;}
+    .map-label{position:absolute;bottom:-28px;left:50%;transform:translateX(-50%);white-space:nowrap;background:#333;color:white;font-size:10px;padding:3px 8px;border-radius:6px;font-weight:600;opacity:0;transition:.3s;pointer-events:none;}
+    .map-point:hover .map-label{opacity:1;}
+    .map-info-panel{padding:30px;border-left:1px solid var(--border);overflow-y:auto;max-height:450px;}
+    .map-info-panel h4{color:var(--primary);font-size:18px;margin-bottom:8px;}
+    .map-info-panel .map-subtitle{font-size:13px;color:var(--text-muted);margin-bottom:20px;}
+    .map-place-list{display:flex;flex-direction:column;gap:12px;}
+    .map-place-item{padding:14px 16px;border-radius:14px;border:2px solid var(--border);cursor:pointer;transition:.3s;display:flex;align-items:center;gap:12px;}
+    .map-place-item:hover,.map-place-item.active{border-color:var(--primary);background:rgba(123,17,19,.05);}
+    .map-place-icon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+    .map-place-info h5{font-size:13px;font-weight:700;color:var(--text);margin-bottom:3px;}
+    .map-place-info p{font-size:11px;color:var(--text-muted);}
+
+    #tour{padding:80px 8%;}
+
+    #back-to-top{position:fixed;bottom:95px;right:25px;background:#7b1113;color:white;border:none;width:50px;height:50px;border-radius:50%;font-size:18px;cursor:pointer;z-index:997;transition:.4s;display:none;align-items:center;justify-content:center;box-shadow:0 5px 20px rgba(123,17,19,.4);}
+    #back-to-top.visible{display:flex;}
+    #back-to-top:hover{background:#ffb703;color:black;transform:translateY(-3px);}
+
+    /* SLIDESHOW MODE */
+    #slideshowOverlay{position:fixed;inset:0;background:#000;z-index:99997;display:none;align-items:center;justify-content:center;flex-direction:column;}
+    #slideshowOverlay.open{display:flex;}
+    .slideshow-img-wrap{width:100%;height:75vh;display:flex;align-items:center;justify-content:center;position:relative;}
+    .slideshow-img-wrap img{max-width:92vw;max-height:75vh;border-radius:10px;animation:fade 1s ease;}
+    .slideshow-caption{color:white;text-align:center;margin-top:18px;font-size:16px;font-weight:600;}
+    .slideshow-progress{display:flex;gap:6px;margin-top:18px;}
+    .slideshow-dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.3);transition:.3s;}
+    .slideshow-dot.active{background:#ffb703;width:24px;border-radius:5px;}
+    .slideshow-controls{display:flex;gap:15px;margin-top:20px;align-items:center;}
+    .slideshow-controls button{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);color:white;width:46px;height:46px;border-radius:50%;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:.3s;}
+    .slideshow-controls button:hover{background:#ffb703;color:#333;}
+    .slideshow-close{position:absolute;top:25px;right:30px;color:white;font-size:32px;cursor:pointer;opacity:.8;}
+    .slideshow-close:hover{opacity:1;}
+
+    footer{background:var(--footer-bg);color:white;text-align:center;padding:40px;margin-top:40px;transition:background .4s;}
+    footer h3{font-size:30px;margin-bottom:10px;}
+    footer p{color:#ddd;}
+
+    .reveal{opacity:0;transform:translateY(40px);transition:opacity .7s ease,transform .7s ease;}
+    .reveal.visible{opacity:1;transform:translateY(0);}
+
+    @media(max-width:900px){
+      .timeline::before{left:20px;}
+      .timeline-item{padding-right:0;padding-left:55px;justify-content:flex-start;}
+      .timeline-item:nth-child(even){padding-left:55px;}
+      .timeline-dot{left:20px;}
+      .timeline-card,.timeline-item:nth-child(even) .timeline-card{border-left:4px solid #7b1113;border-right:none;max-width:100%;}
+      .map-body{grid-template-columns:1fr;}
+      .map-info-panel{border-left:none;border-top:1px solid var(--border);}
+    }
+
+    /* ===== MOBILE BOTTOM NAV ===== */
+    #bottomNav{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-top:1px solid var(--border);z-index:1100;padding:0;box-shadow:0 -4px 20px rgba(0,0,0,.12);}
+    .bnav-inner{display:flex;justify-content:space-around;align-items:center;padding:8px 0 calc(8px + env(safe-area-inset-bottom));}
+    .bnav-item{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;color:var(--text-muted);transition:.3s;padding:6px 10px;border-radius:14px;min-width:52px;}
+    .bnav-item.active{color:var(--primary);}
+    .bnav-item i{font-size:20px;}
+    .bnav-item span{font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.4px;}
+    .bnav-book{background:linear-gradient(135deg,#7b1113,#a4161a) !important;color:white !important;border-radius:16px !important;padding:8px 12px !important;margin-top:-16px;box-shadow:0 4px 15px rgba(123,17,19,.5);}
+    @media(max-width:768px){
+      #bottomNav{display:block;}
+      body{padding-bottom:80px;}
+      #back-to-top{bottom:100px;}
+      nav{display:none;}
+      .dark-toggle{top:15px;right:15px;}
+      .hero h1{font-size:36px;}
+      section{padding:60px 5%;}
+      .cards{grid-template-columns:1fr;}
+      .title h2{font-size:28px;}
+      .planner-form{padding:25px 18px;}
+      .result-header{padding:20px 18px;}
+      .result-content{padding:20px 18px;}
+      .flashcard-grid{grid-template-columns:repeat(auto-fit,minmax(160px,1fr));}
+      .stats-strip{grid-template-columns:repeat(2,1fr);padding:25px 5%;}
+      .map-body{grid-template-columns:1fr;}
+    }
+
+    /* ===== BOOKING SECTION ===== */
+    #booking{padding:70px 8%;}
+    .booking-hero{background:linear-gradient(135deg,#7b1113,#a4161a,#e65100);border-radius:28px;padding:50px 40px;color:white;text-align:center;margin-bottom:40px;position:relative;overflow:hidden;}
+    .booking-hero::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Ccircle cx='30' cy='30' r='30'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");pointer-events:none;}
+    .booking-hero .badge{background:rgba(255,183,3,.25);border:1px solid rgba(255,183,3,.5);color:#ffb703;padding:5px 16px;border-radius:30px;font-size:12px;font-weight:600;letter-spacing:1px;margin-bottom:15px;display:inline-block;}
+    .booking-hero h2{font-size:36px;font-weight:700;margin-bottom:10px;}
+    .booking-hero p{opacity:.9;font-size:15px;max-width:550px;margin:auto;}
+
+    /* Step wizard */
+    .booking-steps{display:flex;justify-content:center;gap:0;margin-bottom:40px;overflow-x:auto;}
+    .step-item{display:flex;align-items:center;gap:0;flex-shrink:0;}
+    .step-circle{width:42px;height:42px;border-radius:50%;background:var(--border);color:var(--text-muted);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;transition:.4s;border:2px solid var(--border);}
+    .step-circle.active{background:#7b1113;color:white;border-color:#7b1113;box-shadow:0 4px 15px rgba(123,17,19,.4);}
+    .step-circle.done{background:#43a047;color:white;border-color:#43a047;}
+    .step-line{width:50px;height:2px;background:var(--border);transition:.4s;}
+    .step-line.done{background:#43a047;}
+    .step-label{font-size:10px;text-align:center;color:var(--text-muted);margin-top:5px;font-weight:600;width:42px;}
+    .step-wrapper{display:flex;flex-direction:column;align-items:center;}
+
+    /* Booking card */
+    .booking-card{background:var(--surface);border-radius:24px;box-shadow:0 15px 50px rgba(0,0,0,.1);overflow:hidden;}
+    .bcard-header{background:linear-gradient(135deg,#7b1113,#a4161a);padding:22px 30px;color:white;display:flex;align-items:center;gap:12px;}
+    .bcard-header h3{font-size:18px;font-weight:700;}
+    .bcard-body{padding:35px 30px;}
+    .booking-step-panel{display:none;}
+    .booking-step-panel.active{display:block;}
+
+    /* Package cards */
+    .pkg-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px;margin-bottom:25px;}
+    .pkg-card{border:2px solid var(--border);border-radius:20px;padding:25px 20px;cursor:pointer;transition:.3s;position:relative;background:var(--surface);}
+    .pkg-card:hover{border-color:#7b1113;transform:translateY(-4px);}
+    .pkg-card.selected{border-color:#7b1113;background:linear-gradient(135deg,rgba(123,17,19,.05),rgba(255,183,3,.05));}
+    .pkg-badge{position:absolute;top:-10px;left:20px;background:#ffb703;color:#7b1113;font-size:11px;font-weight:700;padding:3px 12px;border-radius:20px;}
+    .pkg-icon{font-size:35px;margin-bottom:12px;display:block;}
+    .pkg-name{font-size:16px;font-weight:700;color:var(--primary);margin-bottom:6px;}
+    .pkg-desc{font-size:13px;color:var(--text-muted);line-height:1.6;margin-bottom:15px;}
+    .pkg-price{font-size:22px;font-weight:700;color:#7b1113;}
+    .pkg-price small{font-size:13px;color:var(--text-muted);font-weight:400;}/person
+    .pkg-includes{margin-top:12px;display:flex;flex-direction:column;gap:5px;}
+    .pkg-inc-item{font-size:12px;color:var(--text-muted);display:flex;align-items:center;gap:6px;}
+    .pkg-inc-item i{color:#43a047;font-size:11px;}
+    .pkg-radio{position:absolute;top:18px;right:18px;width:20px;height:20px;border-radius:50%;border:2px solid var(--border);transition:.3s;}
+    .pkg-card.selected .pkg-radio{background:#7b1113;border-color:#7b1113;box-shadow:inset 0 0 0 4px white;}
+
+    /* Hotel cards */
+    .hotel-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px;margin-bottom:25px;}
+    .hotel-card{border:2px solid var(--border);border-radius:18px;overflow:hidden;cursor:pointer;transition:.3s;}
+    .hotel-card:hover{border-color:#7b1113;transform:translateY(-3px);}
+    .hotel-card.selected{border-color:#7b1113;}
+    .hotel-img{width:100%;height:130px;object-fit:cover;background:var(--input-bg);display:flex;align-items:center;justify-content:center;font-size:40px;}
+    .hotel-img-placeholder{width:100%;height:130px;background:linear-gradient(135deg,#7b1113,#a4161a);display:flex;align-items:center;justify-content:center;font-size:40px;}
+    .hotel-info{padding:16px;}
+    .hotel-stars{color:#ffb703;font-size:12px;margin-bottom:4px;}
+    .hotel-name{font-size:14px;font-weight:700;color:var(--text);margin-bottom:4px;}
+    .hotel-loc{font-size:12px;color:var(--text-muted);margin-bottom:8px;}
+    .hotel-price{font-size:16px;font-weight:700;color:#7b1113;}
+    .hotel-price small{font-size:11px;color:var(--text-muted);font-weight:400;}
+    .hotel-radio{width:18px;height:18px;border-radius:50%;border:2px solid var(--border);float:right;margin-top:-2px;transition:.3s;}
+    .hotel-card.selected .hotel-radio{background:#7b1113;border-color:#7b1113;box-shadow:inset 0 0 0 3px white;}
+
+    /* Order summary */
+    .order-summary{background:var(--input-bg);border-radius:18px;padding:25px;margin-bottom:25px;}
+    .order-summary h4{font-size:15px;font-weight:700;color:var(--primary);margin-bottom:18px;display:flex;align-items:center;gap:8px;}
+    .order-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);font-size:14px;}
+    .order-row:last-child{border-bottom:none;font-weight:700;font-size:16px;color:var(--primary);}
+    .order-row .label{color:var(--text-muted);}
+    .order-row .val{font-weight:600;color:var(--text);}
+    .discount-badge{background:#e8f5e9;color:#2e7d32;font-size:11px;padding:2px 8px;border-radius:10px;font-weight:600;}
+
+    /* Payment methods */
+    .payment-methods{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:14px;margin-bottom:25px;}
+    .pay-method{border:2px solid var(--border);border-radius:16px;padding:18px 14px;text-align:center;cursor:pointer;transition:.3s;}
+    .pay-method:hover{border-color:#7b1113;}
+    .pay-method.selected{border-color:#7b1113;background:rgba(123,17,19,.05);}
+    .pay-method .pm-icon{font-size:30px;margin-bottom:8px;display:block;}
+    .pay-method .pm-name{font-size:12px;font-weight:700;color:var(--text);}
+    .pay-method .pm-desc{font-size:10px;color:var(--text-muted);margin-top:2px;}
+    .pm-radio{width:16px;height:16px;border-radius:50%;border:2px solid var(--border);margin:6px auto 0;transition:.3s;}
+    .pay-method.selected .pm-radio{background:#7b1113;border-color:#7b1113;box-shadow:inset 0 0 0 3px white;}
+
+    /* Bank transfer detail */
+    .bank-detail{background:var(--input-bg);border-radius:16px;padding:22px;margin-bottom:20px;display:none;}
+    .bank-detail.show{display:block;}
+    .bank-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;font-size:13px;border-bottom:1px solid var(--border);}
+    .bank-row:last-child{border-bottom:none;}
+    .bank-row .key{color:var(--text-muted);}
+    .bank-row .val{font-weight:700;color:var(--text);font-family:monospace;font-size:14px;}
+    .copy-acct{background:none;border:1px solid var(--border);border-radius:8px;padding:3px 10px;font-size:11px;cursor:pointer;color:var(--primary);font-family:'Poppins',sans-serif;margin-left:8px;transition:.2s;}
+    .copy-acct:hover{background:var(--primary);color:white;}
+
+    /* Booking navigation buttons */
+    .booking-nav{display:flex;gap:12px;justify-content:space-between;margin-top:20px;}
+    .btn-prev{padding:14px 28px;border:2px solid var(--border);border-radius:14px;background:none;color:var(--text);font-family:'Poppins',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:.3s;}
+    .btn-prev:hover{border-color:#7b1113;color:#7b1113;}
+    .btn-next{padding:14px 28px;background:linear-gradient(135deg,#7b1113,#a4161a);color:white;border:none;border-radius:14px;font-family:'Poppins',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:.4s;flex:1;}
+    .btn-next:hover{transform:translateY(-2px);box-shadow:0 10px 25px rgba(123,17,19,.4);}
+    .btn-next:disabled{opacity:.5;cursor:not-allowed;transform:none;}
+    .btn-pay{background:linear-gradient(135deg,#2e7d32,#43a047) !important;}
+    .btn-pay:hover{box-shadow:0 10px 25px rgba(46,125,50,.4) !important;}
+
+    /* Success screen */
+    #bookingSuccess{display:none;text-align:center;padding:40px 20px;}
+    .success-icon{width:90px;height:90px;background:linear-gradient(135deg,#2e7d32,#43a047);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:40px;margin:0 auto 20px;}
+    #bookingSuccess h3{font-size:24px;color:#2e7d32;margin-bottom:10px;}
+    #bookingSuccess p{color:var(--text-muted);margin-bottom:25px;font-size:14px;line-height:1.8;}
+    .booking-ref{background:var(--input-bg);border-radius:14px;padding:16px 22px;display:inline-block;font-size:18px;font-weight:700;color:var(--primary);letter-spacing:2px;margin-bottom:25px;}
+    .wa-connect-btn{display:inline-flex;align-items:center;gap:12px;background:linear-gradient(135deg,#25D366,#128C7E);color:white;padding:16px 32px;border-radius:16px;font-size:16px;font-weight:700;text-decoration:none;cursor:pointer;border:none;font-family:'Poppins',sans-serif;transition:.4s;box-shadow:0 8px 25px rgba(37,211,102,.4);}
+    .wa-connect-btn:hover{transform:translateY(-3px);box-shadow:0 15px 35px rgba(37,211,102,.5);}
+    .wa-connect-btn i{font-size:22px;}
+    .booking-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:15px;}
+    .booking-actions button{padding:12px 22px;border-radius:12px;border:2px solid var(--border);background:var(--surface);color:var(--text);font-family:'Poppins',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:.3s;}
+    .booking-actions button:hover{border-color:#7b1113;color:#7b1113;}
+
+    /* Form inputs in booking */
+    .bform-group{margin-bottom:18px;}
+    .bform-group label{display:block;font-size:12px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:7px;}
+    .bform-group input,.bform-group select,.bform-group textarea{width:100%;padding:13px 16px;border:2px solid var(--border);border-radius:13px;font-family:'Poppins',sans-serif;font-size:14px;color:var(--text);background:var(--input-bg);outline:none;transition:.3s;}
+    .bform-group input:focus,.bform-group select:focus,.bform-group textarea:focus{border-color:#7b1113;box-shadow:0 0 0 3px rgba(123,17,19,.08);}
+    .bform-grid{display:grid;grid-template-columns:1fr 1fr;gap:15px;}
+    @media(max-width:480px){.bform-grid{grid-template-columns:1fr;}}
+
+    /* My bookings */
+    .my-booking-item{background:var(--surface);border-radius:18px;border:1px solid var(--border);padding:20px 22px;margin-bottom:15px;display:flex;gap:15px;align-items:flex-start;}
+    .mbi-icon{width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg,#7b1113,#a4161a);color:white;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+    .mbi-info h5{font-size:14px;font-weight:700;color:var(--text);margin-bottom:4px;}
+    .mbi-info p{font-size:12px;color:var(--text-muted);line-height:1.6;}
+    .mbi-badge{font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;margin-top:6px;display:inline-block;}
+    .mbi-badge.confirmed{background:#e8f5e9;color:#2e7d32;}
+    .mbi-badge.pending{background:#fff3e0;color:#e65100;}
+    .mbi-badge.cancelled{background:#ffebee;color:#c62828;}
+    .mbi-wa{margin-left:auto;background:linear-gradient(135deg,#25D366,#128C7E);color:white;border:none;padding:8px 14px;border-radius:10px;font-size:12px;font-weight:600;cursor:pointer;transition:.3s;font-family:'Poppins',sans-serif;display:flex;align-items:center;gap:6px;white-space:nowrap;}
+    .mbi-wa:hover{transform:scale(1.05);}
+
+    @media(max-width:768px){
+      .hero h1{font-size:45px;}
+      .title h2{font-size:35px;}
+      .planner-form{padding:30px 25px;}
+      .result-content{padding:30px 25px;}
+      .result-header{padding:25px 30px;}
+      .quiz-container{padding:30px 25px;}
+      .dark-toggle span,.search-wrap{display:none;}
+    }
+  </style>
+</head>
+<body>
+  <div id="progress-bar"></div>
+
+  <div id="loader">
+    <div class="loader-circle"></div>
+    <h2 style="font-size:20px;margin-bottom:8px;">Loading Minangkabau...</h2>
+    <p style="font-size:13px;opacity:.7;">Mempersiapkan pengalaman terbaik untuk Anda</p>
+  </div>
+
+  <!-- ===== AUTH GATEKEEPER ===== -->
+  <div id="authGatekeeper">
+    <div class="gate-card">
+      <div class="gate-brand">
+        <div class="gate-icon">🏔️</div>
+        <h2>Explore Minangkabau</h2>
+        <p>Warisan Budaya Sumatera Barat</p>
+      </div>
+      <div id="gateAlert" class="gate-alert"></div>
+      <div class="gate-tabs">
+        <button class="gate-tab active" id="tabLogin" onclick="switchGateForm('login')">Masuk</button>
+        <button class="gate-tab" id="tabReg" onclick="switchGateForm('reg')">Daftar</button>
+      </div>
+      <div id="gateLoginBlock">
+        <div class="gate-input-group">
+          <div class="gate-input-wrap"><i class="fa-solid fa-user"></i><input type="text" id="gateUser" placeholder="Username..."></div>
+          <div class="gate-input-wrap"><i class="fa-solid fa-lock"></i><input type="password" id="gatePass" placeholder="Password..." onkeydown="if(event.key==='Enter')handleGateLogin()"></div>
+        </div>
+        <button class="gate-submit" onclick="handleGateLogin()"><i class="fa-solid fa-right-to-bracket"></i> Masuk Sekarang</button>
+      </div>
+      <div id="gateRegBlock" style="display:none;">
+        <div class="gate-input-group">
+          <div class="gate-input-wrap"><i class="fa-solid fa-id-card"></i><input type="text" id="gateRegName" placeholder="Nama lengkap..."></div>
+          <div class="gate-input-wrap"><i class="fa-solid fa-user"></i><input type="text" id="gateRegUser" placeholder="Username..."></div>
+          <div class="gate-input-wrap"><i class="fa-solid fa-lock"></i><input type="password" id="gateRegPass" placeholder="Password (min. 6 karakter)..."></div>
+        </div>
+        <button class="gate-submit" onclick="handleGateRegister()"><i class="fa-solid fa-user-plus"></i> Buat Akun</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== MAIN WEBSITE WRAPPER ===== -->
+  <div id="mainWebsiteWrapper">
+
+    <header>
+      <div class="hero-bg"></div>
+      <canvas id="particles-canvas"></canvas>
+      <div class="hero">
+        <h1>EXPLORE MINANGKABAU</h1>
+        <p>Discover the beauty of Minangkabau culture, traditional foods, tourism, traditional clothes, legends, and the rich heritage of West Sumatra, Indonesia.</p>
+        <div class="hero-btns">
+          <button onclick="scrollToNav()">Explore Now ✨</button>
+          <button class="btn-outline" onclick="showSection('booking')">🎫 Booking Tour</button>
+        </div>
+      </div>
+    </header>
+
+    <div class="stats-strip" id="statsStrip">
+      <div class="stat-item"><span class="stat-num" data-target="7">0</span><span class="stat-label">Juta Populasi Minang</span></div>
+      <div class="stat-item"><span class="stat-num" data-target="42">0</span><span class="stat-label">Juta Perantau Worldwide</span></div>
+      <div class="stat-item"><span class="stat-num" data-target="19">0</span><span class="stat-label">Kabupaten & Kota</span></div>
+      <div class="stat-item"><span class="stat-num" data-target="300">0</span><span class="stat-label">Tahun Tradisi Rumah Gadang</span></div>
+      <div class="stat-item"><span class="stat-num" data-target="1">0</span><span class="stat-label">Terbesar Matrilineal di Dunia</span></div>
+    </div>
+
+    <nav id="mainNav">
+      <button onclick="showSection('history')">History</button>
+      <button onclick="showSection('culture')">Culture</button>
+      <button onclick="showSection('food')">Foods</button>
+      <button onclick="showSection('tourism')">Tourism</button>
+      <button onclick="showSection('clothes')">Clothes</button>
+      <button onclick="showSection('legend')">Legends</button>
+      <button onclick="showSection('gallery')">Gallery</button>
+      <button onclick="showSection('map-section')">🗺️ Map</button>
+      <button onclick="showSection('flashcard')">🎴 Bahasa Minang</button>
+      <button class="quiz-btn" onclick="showSection('quiz')"><i class="fa-solid fa-brain"></i> Quiz</button>
+      <button onclick="showSection('booking')" style="background:linear-gradient(135deg,#e65100,#ff6d00);color:white;"><i class="fa-solid fa-ticket"></i> Booking Tour</button>
+
+      <div class="search-container">
+        <div class="search-wrap">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input type="text" id="searchInput" placeholder="Cari..." oninput="handleSearch(this.value)" onblur="setTimeout(()=>closeSearch(),200)">
+        </div>
+        <div id="searchResults"></div>
+      </div>
+
+      <div class="user-badge" id="userBadge">
+        <div class="user-avatar" id="userAvatarNav">?</div>
+        <span id="userNameNav">User</span>
+        <i class="fa-solid fa-chevron-down" style="font-size:10px;opacity:.6;"></i>
+        <div class="user-dropdown">
+          <div class="dropdown-header">
+            <div class="dropdown-avatar" id="dropdownAvatar" onclick="document.getElementById('avatarUploadInput').click()">
+              <span id="dropdownAvatarInitial">?</span>
+              <div class="avatar-edit"><i class="fa-solid fa-camera"></i></div>
+            </div>
+            <div>
+              <div class="d-name" id="dropdownName">-</div>
+              <div class="d-email" id="dropdownSince">-</div>
+            </div>
+          </div>
+          <input type="file" id="avatarUploadInput" accept="image/*" style="display:none;" onchange="handleAvatarUpload(event)">
+          <button class="dropdown-item" onclick="showSection('quiz')"><i class="fa-solid fa-brain"></i> Lihat Quiz & Leaderboard</button>
+          <button class="dropdown-item" onclick="showSection('gallery');startSlideshow()"><i class="fa-solid fa-play"></i> Mode Slideshow</button>
+          <button class="dropdown-item logout" onclick="handleLogout()"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
+        </div>
+      </div>
+    </nav>
+
+    <button class="dark-toggle" onclick="toggleDark()" id="darkBtn">🌙 <span>Dark Mode</span></button>
+    <div id="toast"></div>
+
+    <div id="lightbox">
+      <span class="lb-close" onclick="closeLightbox()">✕</span>
+      <img id="lb-img" src="" alt="">
+      <p class="lb-caption" id="lb-caption"></p>
+      <div class="lb-nav">
+        <button onclick="lbNav(-1)">← Prev</button>
+        <button class="lb-play" onclick="closeLightbox();startSlideshow()"><i class="fa-solid fa-play"></i> Slideshow</button>
+        <button onclick="lbNav(1)">Next →</button>
+      </div>
+    </div>
+
+    <!-- SLIDESHOW MODE -->
+    <div id="slideshowOverlay">
+      <span class="slideshow-close" onclick="stopSlideshow()">✕</span>
+      <div class="slideshow-img-wrap"><img id="slideshowImg" src="" alt=""></div>
+      <p class="slideshow-caption" id="slideshowCaption"></p>
+      <div class="slideshow-progress" id="slideshowDots"></div>
+      <div class="slideshow-controls">
+        <button onclick="slideshowNav(-1)"><i class="fa-solid fa-backward-step"></i></button>
+        <button id="slideshowPlayBtn" onclick="toggleSlideshowPlay()"><i class="fa-solid fa-pause"></i></button>
+        <button onclick="slideshowNav(1)"><i class="fa-solid fa-forward-step"></i></button>
+      </div>
+    </div>
+
+    <!-- ===== HISTORY ===== -->
+    <section id="history" class="active">
+      <div class="title reveal"><h2>History of Minangkabau</h2><p>Journey through the rich history and origins of the Minangkabau people.</p></div>
+      <div class="fact-box reveal">
+        <h2>About Minangkabau</h2>
+        <p>Minangkabau is an ethnic group from West Sumatra, Indonesia. Famous for their matrilineal culture, Rumah Gadang traditional houses, delicious culinary traditions, and beautiful natural landscapes.</p>
+      </div>
+      <div class="timeline" id="timelineContainer"></div>
+    </section>
+
+    <!-- ===== CULTURE ===== -->
+    <section id="culture">
+      <div class="title reveal"><h2>Culture & Arts</h2></div>
+      <div class="cards" id="cards-culture"></div>
+    </section>
+
+    <!-- ===== FOOD ===== -->
+    <section id="food">
+      <div class="title reveal"><h2>Traditional Foods</h2></div>
+      <div class="cards" id="cards-food"></div>
+    </section>
+
+    <!-- ===== TOURISM ===== -->
+    <section id="tourism">
+      <div class="title reveal"><h2>Tourism & Nature</h2></div>
+      <div class="weather-widget reveal">
+        <div class="weather-left"><div class="weather-icon">⛅</div><div class="weather-info"><h4>Padang, West Sumatra</h4><p>Partly Cloudy — Great day to explore!</p></div></div>
+        <div class="weather-right"><div class="weather-temp">28°C</div><small>Feels like 32°C</small></div>
+        <div class="weather-extras">
+          <div class="weather-extra-item">💧 Humidity: 78%</div>
+          <div class="weather-extra-item">💨 Wind: 12 km/h</div>
+          <div class="weather-extra-item">🌅 Sunrise: 06:05</div>
+          <div class="weather-extra-item">🌄 Sunset: 18:20</div>
+          <div class="weather-extra-item">☔ Rain: 30%</div>
+        </div>
+      </div>
+      <div class="cards" id="cards-tourism"></div>
+    </section>
+
+    <!-- ===== CLOTHES ===== -->
+    <section id="clothes">
+      <div class="title reveal"><h2>Traditional Clothes</h2></div>
+      <div class="cards" id="cards-clothes"></div>
+    </section>
+
+    <!-- ===== LEGEND ===== -->
+    <section id="legend">
+      <div class="title reveal"><h2>Legends & Folklore</h2></div>
+      <div class="cards" id="cards-legend"></div>
+    </section>
+
+    <!-- ===== GALLERY ===== -->
+    <section id="gallery">
+      <div class="title reveal"><h2>Photo Gallery</h2><p>Click any photo to view fullscreen, or start a slideshow</p></div>
+      <div class="gallery-toolbar reveal">
+        <button class="active" onclick="filterGallery('all',this)">Semua</button>
+        <button onclick="filterGallery('culture',this)">Budaya</button>
+        <button onclick="filterGallery('food',this)">Kuliner</button>
+        <button onclick="filterGallery('tourism',this)">Wisata</button>
+        <button onclick="startSlideshow()"><i class="fa-solid fa-play"></i> Slideshow</button>
+      </div>
+      <div class="gallery" id="galleryGrid"></div>
+    </section>
+
+    <!-- ===== INTERACTIVE MAP ===== -->
+    <section id="map-section">
+      <div class="title reveal"><h2>🗺️ Peta Wisata Minangkabau</h2><p>Jelajahi destinasi terbaik di Sumatera Barat secara interaktif</p></div>
+      <div class="map-wrapper reveal">
+        <div class="map-header">
+          <h3><i class="fa-solid fa-map-pin"></i> West Sumatra — Interactive Destination Map</h3>
+          <div class="map-legend">
+            <div class="legend-item"><div class="legend-dot" style="background:#7b1113;"></div>Budaya</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#1565c0;"></div>Alam</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#2e7d32;"></div>Kuliner</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#e65100;"></div>Sejarah</div>
+          </div>
+        </div>
+        <div class="map-body">
+          <div class="map-placeholder" id="mapVisual">
+            <svg width="100%" height="100%" viewBox="0 0 500 450" style="position:absolute;inset:0;">
+              <path d="M80,50 Q120,30 200,40 Q280,50 350,80 Q420,110 440,180 Q460,250 420,330 Q380,400 300,420 Q220,440 160,400 Q100,360 70,290 Q40,220 50,150 Q60,90 80,50Z" fill="#c8e6c9" stroke="#81c784" stroke-width="2"/>
+              <ellipse cx="180" cy="200" rx="25" ry="15" fill="#42a5f5" opacity=".8"/>
+              <ellipse cx="280" cy="160" rx="18" ry="12" fill="#42a5f5" opacity=".8"/>
+              <path d="M200,80 Q220,120 210,160 Q200,200 180,220" fill="none" stroke="#42a5f5" stroke-width="2" opacity=".6"/>
+              <path d="M300,100 Q310,150 290,200 Q270,240 260,280" fill="none" stroke="#42a5f5" stroke-width="2" opacity=".6"/>
+              <text x="250" y="350" text-anchor="middle" font-family="Poppins" font-size="14" fill="#2e7d32" font-weight="600">Sumatera Barat</text>
+            </svg>
+            <div class="map-point" style="left:40%;top:35%;" onclick="selectPlace(0)"><div class="map-pin red"><i class="fa-solid fa-landmark"></i></div><div class="map-label">Bukittinggi</div></div>
+            <div class="map-point" style="left:35%;top:50%;" onclick="selectPlace(1)"><div class="map-pin blue"><i class="fa-solid fa-water"></i></div><div class="map-label">Danau Maninjau</div></div>
+            <div class="map-point" style="left:58%;top:30%;" onclick="selectPlace(2)"><div class="map-pin orange"><i class="fa-solid fa-crown"></i></div><div class="map-label">Pagaruyung</div></div>
+            <div class="map-point" style="left:50%;top:55%;" onclick="selectPlace(3)"><div class="map-pin blue"><i class="fa-solid fa-mountain"></i></div><div class="map-label">Harau Valley</div></div>
+            <div class="map-point" style="left:30%;top:70%;" onclick="selectPlace(4)"><div class="map-pin green"><i class="fa-solid fa-utensils"></i></div><div class="map-label">Padang</div></div>
+            <div class="map-point" style="left:65%;top:45%;" onclick="selectPlace(5)"><div class="map-pin blue"><i class="fa-solid fa-water"></i></div><div class="map-label">Danau Singkarak</div></div>
+          </div>
+          <div class="map-info-panel">
+            <h4>Destinasi Wisata</h4>
+            <p class="map-subtitle">Klik pin atau pilih dari daftar</p>
+            <div class="map-place-list" id="placeList"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== FLASHCARD ===== -->
+    <section id="flashcard">
+      <div class="title reveal">
+        <h2>🎴 Belajar Bahasa Minang</h2>
+        <p>Hover atau klik kartu untuk melihat artinya dalam Bahasa Indonesia & English</p>
+      </div>
+      <div class="flashcard-grid" id="flashcardGrid"></div>
+      <p class="fc-tip reveal" style="margin-top:30px;"><i class="fa-solid fa-hand-pointer"></i> Hover kartu untuk membaliknya dan melihat arti!</p>
+    </section>
+
+    <!-- ===== QUIZ ===== -->
+    <section id="quiz">
+      <div class="title reveal"><h2>🧠 Culture Quiz</h2><p>Test your knowledge about Minangkabau culture and heritage!</p></div>
+      <div class="quiz-container reveal">
+        <div class="quiz-hero"><h2>🏆 Minangkabau Challenge</h2><p>10 questions · Test your knowledge · Earn your badge!</p></div>
+        <div id="quiz-body">
+          <div class="quiz-progress-wrap">
+            <div class="quiz-progress-label"><span id="q-label">Question 1 of 10</span><span id="q-score-live">Score: 0</span></div>
+            <div class="quiz-progress-bar"><div class="quiz-progress-fill" id="q-progress" style="width:10%"></div></div>
+          </div>
+          <div class="quiz-question" id="q-text"></div>
+          <div class="quiz-options" id="q-options"></div>
+          <div class="quiz-feedback" id="q-feedback"></div>
+          <button class="quiz-btn" id="q-next" onclick="nextQuestion()" disabled>Next Question →</button>
+        </div>
+        <div id="quiz-result" style="display:none;">
+          <div class="quiz-result">
+            <div class="score-circle"><div class="score-num" id="final-score">0</div><div class="score-label">/ 10</div></div>
+            <h3 id="result-title"></h3><p id="result-desc"></p>
+            <button class="quiz-btn" onclick="restartQuiz()" style="max-width:250px;margin:auto;">🔄 Play Again</button>
+          </div>
+          <div class="leaderboard-box">
+            <h4><i class="fa-solid fa-trophy"></i> Leaderboard</h4>
+            <div id="leaderboardList"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <button id="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Back to Top"><i class="fa-solid fa-chevron-up"></i></button>
+
+    <!-- ===== BOOKING TIKET TOUR ===== -->
+    <section id="booking">
+      <div class="booking-hero reveal">
+        <div class="badge">🎫 PESAN TIKET</div>
+        <h2>🏔️ Booking Tour Minangkabau</h2>
+        <p>Pesan paket wisata lengkap — transport, tiket masuk, penginapan & tour guide lokal berpengalaman</p>
+      </div>
+
+      <!-- Step Wizard -->
+      <div class="booking-steps reveal">
+        <div class="step-wrapper"><div class="step-circle active" id="sc1">1</div><div class="step-label">Paket</div></div>
+        <div class="step-item"><div class="step-line" id="sl1"></div></div>
+        <div class="step-wrapper"><div class="step-circle" id="sc2">2</div><div class="step-label">Hotel</div></div>
+        <div class="step-item"><div class="step-line" id="sl2"></div></div>
+        <div class="step-wrapper"><div class="step-circle" id="sc3">3</div><div class="step-label">Data</div></div>
+        <div class="step-item"><div class="step-line" id="sl3"></div></div>
+        <div class="step-wrapper"><div class="step-circle" id="sc4">4</div><div class="step-label">Bayar</div></div>
+        <div class="step-item"><div class="step-line" id="sl4"></div></div>
+        <div class="step-wrapper"><div class="step-circle" id="sc5">✓</div><div class="step-label">Selesai</div></div>
+      </div>
+
+      <div class="booking-card reveal">
+
+        <!-- ===== STEP 1: PILIH PAKET ===== -->
+        <div class="booking-step-panel active" id="bstep1">
+          <div class="bcard-header"><i class="fa-solid fa-map-marked-alt" style="font-size:22px;"></i><h3>Pilih Paket Wisata</h3></div>
+          <div class="bcard-body">
+            <div class="pkg-grid">
+              <div class="pkg-card" id="pkg-1day" onclick="selectPackage('1day',this)">
+                <div class="pkg-radio"></div>
+                <span class="pkg-icon">🏙️</span>
+                <div class="pkg-name">City Explorer — 1 Hari</div>
+                <div class="pkg-desc">Jelajahi Bukittinggi, Jam Gadang, Ngarai Sianok & Pasar Atas dalam sehari penuh.</div>
+                <div class="pkg-price">Rp 350.000 <small>/orang</small></div>
+                <div class="pkg-includes">
+                  <div class="pkg-inc-item"><i class="fa-solid fa-check"></i> Transport AC</div>
+                  <div class="pkg-inc-item"><i class="fa-solid fa-check"></i> Tiket masuk semua destinasi</div>
+                  <div class="pkg-inc-item"><i class="fa-solid fa-check"></i> Tour guide lokal</div>
+                  <div class="pkg-inc-item"><i class="fa-solid fa-check"></i> Makan siang khas Padang</div>
+                </div>
+              </div>
+              <div class="pkg-card" id="pkg-3day" onclick="selectPackage('3day',this)">
+                <div class="pkg-badge">⭐ TERPOPULER</div>
+                <div class="pkg-radio"></div>
+                <span class="pkg-icon">🌿</span>
+                <div class="pkg-name">Nature & Culture — 3 Hari</div>
+                <div class="pkg-desc">Bukittinggi, Danau Maninjau, Lembah Harau, Istana Pagaruyung & Pantai Padang.</div>
+                <div class="pkg-price">Rp 850.000 <small>/orang</small></div>
+                <div class="pkg-includes">
+                  <div class="pkg-inc-item"><i class="fa-solid fa-check"></i> Transport AC PP</div>
+                  <div class="pkg-inc-item"><i class="fa-solid fa-check"></i> Tiket masuk semua destinasi</div>
+                  <div class="pkg-inc-item"><i class="fa-solid fa-check"></i> Tour guide senior</div>
+                  <div class="pkg-inc-item"><i class="fa-solid fa-check"></i> 2x makan/hari</div>
+                  <div class="pkg-inc-item"><i class="fa-solid fa-check"></i> Snack & air mineral</div>
+                </div>
+              </div>
+              <div class="pkg-card" id="pkg-5day" onclick="selectPackage('5day',this)">
+                <div class="pkg-badge" style="background:#7b1113;color:#fff;">👑 PREMIUM</div>
+                <div class="pkg-radio"></div>
+                <span class="pkg-icon">🏔️</span>
+                <div class="pkg-name">Full Minangkabau — 5 Hari</div>
+                <div class="pkg-desc">Paket lengkap: kota, alam, budaya, kuliner & wisata tersembunyi Sumatera Barat.</div>
+                <div class="pkg-price">Rp 1.500.000 <small>/orang</small></div>
+                <div class="pkg-includes">
+                  <div class="pkg-inc-item"><i class="fa-solid fa-check"></i> Transport pribadi AC</div>
+                  <div class="pkg-inc-item"><i class="fa-solid fa-check"></i> Semua tiket & asuransi</div>
+                  <div class="pkg-inc-item"><i class="fa-solid fa-check"></i> Tour guide + asisten</div>
+                  <div class="pkg-inc-item"><i class="fa-solid fa-check"></i> 3x makan premium/hari</div>
+                  <div class="pkg-inc-item"><i class="fa-solid fa-check"></i> Kelas memasak Rendang</div>
+                  <div class="pkg-inc-item"><i class="fa-solid fa-check"></i> Foto profesional</div>
+                </div>
+              </div>
+            </div>
+            <!-- Jumlah orang -->
+            <div class="bform-grid">
+              <div class="bform-group">
+                <label>📅 Tanggal Keberangkatan</label>
+                <input type="date" id="bk-date" min="" onchange="calcTotal()">
+              </div>
+              <div class="bform-group">
+                <label>👥 Jumlah Peserta</label>
+                <div style="display:flex;align-items:center;gap:12px;">
+                  <button onclick="changePax(-1)" style="width:38px;height:38px;border-radius:50%;border:2px solid var(--border);background:var(--surface);font-size:18px;cursor:pointer;color:var(--primary);font-weight:700;transition:.2s;" onmouseover="this.style.background='#7b1113';this.style.color='white'" onmouseout="this.style.background='var(--surface)';this.style.color='var(--primary)'">−</button>
+                  <span id="paxCount" style="font-size:22px;font-weight:700;color:var(--primary);min-width:30px;text-align:center;">2</span>
+                  <button onclick="changePax(1)" style="width:38px;height:38px;border-radius:50%;border:2px solid var(--border);background:var(--surface);font-size:18px;cursor:pointer;color:var(--primary);font-weight:700;transition:.2s;" onmouseover="this.style.background='#7b1113';this.style.color='white'" onmouseout="this.style.background='var(--surface)';this.style.color='var(--primary)'">+</button>
+                  <span style="font-size:13px;color:var(--text-muted);">orang</span>
+                </div>
+                <p style="font-size:11px;color:#2e7d32;margin-top:8px;" id="groupDiscountHint"></p>
+              </div>
+            </div>
+            <div class="booking-nav">
+              <button class="btn-next" onclick="goStep(2)">Pilih Hotel →</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ===== STEP 2: PILIH HOTEL ===== -->
+        <div class="booking-step-panel" id="bstep2">
+          <div class="bcard-header"><i class="fa-solid fa-hotel" style="font-size:22px;"></i><h3>Pilih Penginapan</h3></div>
+          <div class="bcard-body">
+            <div class="hotel-grid">
+              <div class="hotel-card" id="ht-no" onclick="selectHotel('none',this)">
+                <div class="hotel-img-placeholder">🏕️</div>
+                <div class="hotel-info">
+                  <div class="hotel-name">Tanpa Penginapan <div class="hotel-radio" style="float:right;margin-top:2px;"></div></div>
+                  <div class="hotel-loc">Saya sudah punya penginapan sendiri</div>
+                  <div class="hotel-price">Gratis</div>
+                </div>
+              </div>
+              <div class="hotel-card" id="ht-std" onclick="selectHotel('standard',this)">
+                <div class="hotel-img-placeholder">🏨</div>
+                <div class="hotel-info">
+                  <div class="hotel-stars">★★★</div>
+                  <div class="hotel-name">Hotel Standart <div class="hotel-radio" style="float:right;margin-top:2px;"></div></div>
+                  <div class="hotel-loc">📍 Pusat Kota Bukittinggi</div>
+                  <div class="hotel-price">Rp 250.000 <small>/malam</small></div>
+                </div>
+              </div>
+              <div class="hotel-card" id="ht-sup" onclick="selectHotel('superior',this)">
+                <div class="hotel-img-placeholder">🏩</div>
+                <div class="hotel-info">
+                  <div class="hotel-stars">★★★★</div>
+                  <div class="hotel-name">Hotel Superior <div class="hotel-radio" style="float:right;margin-top:2px;"></div></div>
+                  <div class="hotel-loc">📍 Dekat Jam Gadang</div>
+                  <div class="hotel-price">Rp 450.000 <small>/malam</small></div>
+                </div>
+              </div>
+              <div class="hotel-card" id="ht-lux" onclick="selectHotel('luxury',this)">
+                <div class="hotel-img-placeholder">🏰</div>
+                <div class="hotel-info">
+                  <div class="hotel-stars">★★★★★</div>
+                  <div class="hotel-name">Hotel Mewah <div class="hotel-radio" style="float:right;margin-top:2px;"></div></div>
+                  <div class="hotel-loc">📍 View Ngarai Sianok</div>
+                  <div class="hotel-price">Rp 850.000 <small>/malam</small></div>
+                </div>
+              </div>
+            </div>
+            <div class="booking-nav">
+              <button class="btn-prev" onclick="goStep(1)">← Kembali</button>
+              <button class="btn-next" onclick="goStep(3)">Isi Data →</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ===== STEP 3: DATA PESERTA ===== -->
+        <div class="booking-step-panel" id="bstep3">
+          <div class="bcard-header"><i class="fa-solid fa-user-edit" style="font-size:22px;"></i><h3>Data Peserta</h3></div>
+          <div class="bcard-body">
+            <div class="bform-grid">
+              <div class="bform-group">
+                <label>Nama Lengkap</label>
+                <input type="text" id="bk-name" placeholder="Nama sesuai KTP/Paspor">
+              </div>
+              <div class="bform-group">
+                <label>Nomor WhatsApp</label>
+                <input type="tel" id="bk-wa" placeholder="08xxxxxxxxxx">
+              </div>
+            </div>
+            <div class="bform-grid">
+              <div class="bform-group">
+                <label>Email</label>
+                <input type="email" id="bk-email" placeholder="email@kamu.com">
+              </div>
+              <div class="bform-group">
+                <label>Kota Asal</label>
+                <input type="text" id="bk-city" placeholder="Jakarta, Surabaya, dll.">
+              </div>
+            </div>
+            <div class="bform-group">
+              <label>Kebutuhan Khusus (opsional)</label>
+              <input type="text" id="bk-special" placeholder="Vegetarian, kursi roda, alergi makanan...">
+            </div>
+
+            <!-- Asuransi & Promo -->
+            <div class="bform-group" style="background:var(--input-bg);border-radius:14px;padding:16px 18px;display:flex;align-items:center;gap:12px;">
+              <input type="checkbox" id="bk-insurance" onchange="toggleInsurance(this.checked)" style="width:18px;height:18px;accent-color:#7b1113;cursor:pointer;">
+              <label for="bk-insurance" style="margin:0;text-transform:none;font-weight:600;font-size:13px;color:var(--text);cursor:pointer;flex:1;">🛡️ Tambahkan Asuransi Perjalanan <span style="color:var(--text-muted);font-weight:400;">(Rp 25.000/orang)</span></label>
+            </div>
+            <div class="bform-group">
+              <label>Kode Promo (opsional)</label>
+              <div style="display:flex;gap:10px;">
+                <input type="text" id="bk-promo" placeholder="Contoh: MINANG10" style="flex:1;text-transform:uppercase;">
+                <button onclick="applyPromo()" style="padding:0 22px;border:none;border-radius:13px;background:#ffb703;color:#7b1113;font-family:'Poppins',sans-serif;font-weight:700;cursor:pointer;font-size:13px;white-space:nowrap;">Terapkan</button>
+              </div>
+              <p id="promoMsg" style="font-size:12px;margin-top:6px;"></p>
+            </div>
+
+            <!-- Ringkasan pesanan -->
+            <div class="order-summary">
+              <h4><i class="fa-solid fa-receipt"></i> Ringkasan Pesanan</h4>
+              <div id="summaryRows"></div>
+            </div>
+
+            <div class="booking-nav">
+              <button class="btn-prev" onclick="goStep(2)">← Kembali</button>
+              <button class="btn-next" onclick="goStep(4)">Lanjut Bayar →</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ===== STEP 4: PEMBAYARAN ===== -->
+        <div class="booking-step-panel" id="bstep4">
+          <div class="bcard-header"><i class="fa-solid fa-credit-card" style="font-size:22px;"></i><h3>Pilih Metode Pembayaran</h3></div>
+          <div class="bcard-body">
+            <div class="payment-methods">
+              <div class="pay-method" onclick="selectPayment('bca',this)">
+                <span class="pm-icon">🏦</span>
+                <div class="pm-name">BCA Transfer</div>
+                <div class="pm-desc">Bank Central Asia</div>
+                <div class="pm-radio"></div>
+              </div>
+              <div class="pay-method" onclick="selectPayment('mandiri',this)">
+                <span class="pm-icon">🏛️</span>
+                <div class="pm-name">Mandiri</div>
+                <div class="pm-desc">Bank Mandiri</div>
+                <div class="pm-radio"></div>
+              </div>
+              <div class="pay-method" onclick="selectPayment('gopay',this)">
+                <span class="pm-icon">💚</span>
+                <div class="pm-name">GoPay</div>
+                <div class="pm-desc">Dompet Digital</div>
+                <div class="pm-radio"></div>
+              </div>
+              <div class="pay-method" onclick="selectPayment('dana',this)">
+                <span class="pm-icon">💙</span>
+                <div class="pm-name">DANA</div>
+                <div class="pm-desc">Dompet Digital</div>
+                <div class="pm-radio"></div>
+              </div>
+              <div class="pay-method" onclick="selectPayment('ovo',this)">
+                <span class="pm-icon">💜</span>
+                <div class="pm-name">OVO</div>
+                <div class="pm-desc">Dompet Digital</div>
+                <div class="pm-radio"></div>
+              </div>
+              <div class="pay-method" onclick="selectPayment('qris',this)">
+                <span class="pm-icon">📱</span>
+                <div class="pm-name">QRIS</div>
+                <div class="pm-desc">Scan & Bayar</div>
+                <div class="pm-radio"></div>
+              </div>
+            </div>
+
+            <!-- Detail rekening -->
+            <div class="bank-detail" id="bankDetail">
+              <div class="bank-row"><span class="key">Bank</span><span class="val" id="bd-bank">-</span></div>
+              <div class="bank-row"><span class="key">No. Rekening / No. HP</span><span class="val" id="bd-acct">-<button class="copy-acct" onclick="copyAcct()">Salin</button></span></div>
+              <div class="bank-row"><span class="key">Atas Nama</span><span class="val">Ahmad Fauzi (Tour Guide)</span></div>
+              <div class="bank-row"><span class="key">Total Transfer</span><span class="val" id="bd-total" style="color:#7b1113;">-</span></div>
+            </div>
+
+            <!-- Final summary -->
+            <div class="order-summary">
+              <h4><i class="fa-solid fa-receipt"></i> Total Pembayaran</h4>
+              <div id="finalRows"></div>
+            </div>
+
+            <div style="background:#fff3e0;border-left:3px solid #e65100;border-radius:10px;padding:12px 16px;font-size:13px;color:#e65100;margin-bottom:20px;">
+              ⚠️ Harap simpan bukti transfer sebelum mengklik tombol Konfirmasi. Booking akan dikonfirmasi dalam 1x24 jam.
+            </div>
+
+            <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:20px;">
+              <input type="checkbox" id="bk-tnc" onchange="toggleTnC(this.checked)" style="width:18px;height:18px;margin-top:2px;accent-color:#7b1113;cursor:pointer;flex-shrink:0;">
+              <label for="bk-tnc" style="margin:0;font-size:12px;color:var(--text-muted);cursor:pointer;line-height:1.6;">Saya menyetujui <strong style="color:var(--primary);">Syarat & Ketentuan</strong> pemesanan, termasuk kebijakan pembatalan dan bahwa data yang saya masukkan sudah benar.</label>
+            </div>
+
+            <div class="booking-nav">
+              <button class="btn-prev" onclick="goStep(3)">← Kembali</button>
+              <button class="btn-next btn-pay" id="btnConfirmPay" onclick="confirmPayment()" disabled><i class="fa-solid fa-check-circle"></i> Konfirmasi Pembayaran</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ===== STEP 5: SUKSES ===== -->
+        <div class="booking-step-panel" id="bstep5">
+          <div class="bcard-body" id="bookingSuccess">
+            <div class="success-icon">✅</div>
+            <h3>Pemesanan Berhasil! 🎉</h3>
+            <p>Terima kasih telah memesan tour Minangkabau bersama kami.<br>
+            Tour guide akan menghubungi Anda dalam 1x24 jam untuk konfirmasi jadwal.</p>
+            <div class="booking-ref" id="bookingRef">MIN-000000</div>
+            <p id="departureCountdown" style="font-size:13px;font-weight:700;color:#2e7d32;background:#e8f5e9;display:inline-block;padding:6px 16px;border-radius:20px;margin:12px 0 20px;"></p>
+            <br>
+            <p style="font-size:13px;color:var(--text-muted);margin-bottom:20px;">Hubungi tour guide kami langsung via WhatsApp untuk pertanyaan & konfirmasi:</p>
+            <button class="wa-connect-btn" onclick="connectTourGuide()">
+              <i class="fa-brands fa-whatsapp"></i>
+              Chat Tour Guide Sekarang
+            </button>
+            <div class="booking-actions">
+              <button onclick="downloadReceipt()"><i class="fa-solid fa-download"></i> Unduh Bukti</button>
+              <button onclick="viewMyBookings()"><i class="fa-solid fa-list"></i> Lihat Pesanan</button>
+              <button onclick="resetBooking()"><i class="fa-solid fa-plus"></i> Pesan Lagi</button>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /booking-card -->
+
+      <!-- MY BOOKINGS -->
+      <div id="myBookingsWrap" style="display:none;margin-top:40px;">
+        <h3 style="color:var(--primary);margin-bottom:20px;font-size:20px;"><i class="fa-solid fa-clock-rotate-left"></i> Riwayat Pesanan Saya</h3>
+        <div id="myBookingsList"></div>
+      </div>
+
+    </section>
+
+
+    <!-- BOTTOM NAV MOBILE -->
+    <div id="bottomNav">
+      <div class="bnav-inner">
+        <div class="bnav-item active" id="bn-home" onclick="bnavGo('history','bn-home')">
+          <i class="fa-solid fa-house"></i>
+          <span>Home</span>
+        </div>
+        <div class="bnav-item" id="bn-explore" onclick="bnavGo('tourism','bn-explore')">
+          <i class="fa-solid fa-compass"></i>
+          <span>Explore</span>
+        </div>
+        <div class="bnav-item bnav-book" id="bn-book" onclick="bnavGo('booking','bn-book')">
+          <i class="fa-solid fa-ticket"></i>
+          <span>Booking</span>
+        </div>
+        <div class="bnav-item" id="bn-quiz" onclick="bnavGo('quiz','bn-quiz')">
+          <i class="fa-solid fa-brain"></i>
+          <span>Quiz</span>
+        </div>
+      </div>
+    </div>
+
+    <footer>
+      <h3>Wonderful Minangkabau</h3>
+      <p>Culture • Culinary • Tourism • Tradition</p><br>
+      <p>© 2026 Explore Minangkabau | HTML • CSS • JavaScript</p>
+    </footer>
+  </div>
+  <script>
+  /* ========= IMAGE HELPER — local img/ folder first, fallback to Unsplash ========= */
+  function imgFallback(el, fallbackQuery){
+    el.onerror = null;
+    el.src = `https://source.unsplash.com/600x500/?${encodeURIComponent(fallbackQuery)}`;
+  }
+
+  /* ========= DATA ========= */
+  const siteData = {
+    history:[
+      {year:"7th Century",title:"🏔️ Early Settlements",desc:"The Minangkabau people settle in the highlands of West Sumatra, centered around the Tanah Datar plateau."},
+      {year:"13th Century",title:"👑 Kingdom of Pagaruyung",desc:"Pagaruyung Kingdom established, becoming the political and cultural center of Minangkabau for centuries."},
+      {year:"16th Century",title:"🕌 Spread of Islam",desc:"Islam spreads through trade routes, blending with the existing matrilineal adat (customary law)."},
+      {year:"1803–1838",title:"⚔️ Padri War",desc:"Conflict between Islamic reformists (Padri) and traditional adat leaders, involving Dutch colonial forces."},
+      {year:"20th Century",title:"🌏 Merantau Tradition",desc:"Young men travel across the archipelago — spreading culture, trade, and Padang cuisine worldwide."},
+      {year:"Today",title:"🌟 Living Heritage",desc:"Minangkabau remains the world's largest matrilineal society, celebrated globally for cuisine, arts, and values."},
+    ],
+    culture:[
+      {name:"Rumah Gadang",desc:"Iconic buffalo horn-shaped roof, a symbol of Minangkabau identity and matrilineal pride.",img:"rumah-gadang.jpg",fallback:"rumah gadang traditional house"},
+      {name:"Tari Piring",desc:"Graceful plate dance performed during celebrations, symbolizing gratitude for the harvest.",img:"tari-piring.jpg",fallback:"indonesian traditional dance"},
+    ],
+    food:[
+      {name:"Rendang",desc:"Voted world's most delicious food — slow-cooked dry beef curry with rich coconut and spices.",img:"rendang.jpg",fallback:"rendang beef curry indonesian food"},
+      {name:"Sate Padang",desc:"Beef satay served with thick, spicy yellow sauce unique to Padang region.",img:"sate-padang.jpg",fallback:"satay indonesian food"},
+    ],
+    tourism:[
+      {name:"Lake Maninjau",desc:"Stunning volcanic crater lake surrounded by lush green mountains — perfect for sunsets.",img:"danau-maninjau.jpg",fallback:"crater lake mountains sumatra"},
+      {name:"Harau Valley",desc:"Dramatic 100m cliffs, waterfalls, and scenic rice paddies.",img:"harau-valley.jpg",fallback:"valley cliffs waterfall indonesia"},
+    ],
+    clothes:[
+      {name:"Bundo Kanduang",desc:"Traditional women's ceremonial clothing symbolizing wisdom and the honored role of mothers.",img:"bundo-kanduang.jpg",fallback:"traditional indonesian clothing"},
+      {name:"Wedding Costume",desc:"Vibrant bridal attire adorned with gold embroidery and elaborate headdresses.",img:"wedding-costume.jpg",fallback:"indonesian wedding costume gold"},
+    ],
+    legend:[
+      {name:"Malin Kundang",desc:"The timeless legend of a son who denied his mother and was turned to stone.",img:"malin-kundang.jpg",fallback:"rock formation beach indonesia"},
+    ],
+    gallery:[
+      {src:"baju-adat.jpg",caption:"Baju Adat Minangkabau",fallback:"indonesian traditional costume",cat:"culture"},
+      {src:"bundo-kanduang.jpg",caption:"Baju Datuak",fallback:"traditional indonesian clothing",cat:"culture"},
+      {src:"danau-maninjau.jpg",caption:"Danau Maninjau",fallback:"crater lake sumatra",cat:"tourism"},
+      {src:"harau-valley.jpg",caption:"Harau Valley",fallback:"valley cliffs indonesia",cat:"tourism"},
+      {src:"jam-gadang.jpg",caption:"Jam Gadang, Bukittinggi",fallback:"clock tower bukittinggi",cat:"tourism"},
+      {src:"rendang.jpg",caption:"Rendang — World's Best Food",fallback:"rendang beef curry",cat:"food"},
+      {src:"rumah-gadang.jpg",caption:"Rumah Gadang",fallback:"rumah gadang house",cat:"culture"},
+      {src:"sate-padang.jpg",caption:"Sate Padang",fallback:"satay indonesian food",cat:"food"},
+      {src:"tari-piring.jpg",caption:"Tari Piring",fallback:"indonesian dance",cat:"culture"},
+      {src:"wisata-alahan-panjang.jpg",caption:"Wisata Alahan Panjang",fallback:"sumatra landscape nature",cat:"tourism"},
+    ],
+  };
+
+  const mapPlaces = [
+    {name:"Bukittinggi",type:"Budaya",color:"red",emoji:"🏯",desc:"Kota bersejarah dengan Jam Gadang ikonik dan Ngarai Sianok yang memukau.",cat:"history"},
+    {name:"Danau Maninjau",type:"Alam",color:"blue",emoji:"🌊",desc:"Danau kawah vulkanik yang tenang dikelilingi perbukitan hijau.",cat:"tourism"},
+    {name:"Istana Pagaruyung",type:"Sejarah",color:"orange",emoji:"👑",desc:"Replika megah istana kerajaan Minangkabau yang mewah.",cat:"history"},
+    {name:"Lembah Harau",type:"Alam",color:"blue",emoji:"🏔️",desc:"Tebing granit dramatis 100m dengan air terjun dan sawah indah.",cat:"tourism"},
+    {name:"Kota Padang",type:"Kuliner",color:"green",emoji:"🍛",desc:"Ibu kota provinsi, surga kuliner Padang dengan Rendang asli.",cat:"food"},
+    {name:"Danau Singkarak",type:"Alam",color:"blue",emoji:"💧",desc:"Danau tektonik terbesar di Sumatera Barat, habitat ikan bilih langka.",cat:"tourism"},
+  ];
+
+  const flashcards = [
+    {minang:"Uda",indo:"Kakak laki-laki",eng:"Elder brother"},
+    {minang:"Uni",indo:"Kakak perempuan",eng:"Elder sister"},
+    {minang:"Amak",indo:"Ibu",eng:"Mother"},
+    {minang:"Apak",indo:"Ayah",eng:"Father"},
+    {minang:"Den",indo:"Saya / Aku",eng:"I / Me"},
+    {minang:"Iko",indo:"Ini",eng:"This"},
+    {minang:"Manga",indo:"Kenapa",eng:"Why"},
+    {minang:"Bilo",indo:"Kapan",eng:"When"},
+    {minang:"Baa Kabanyo",indo:"Apa kabar?",eng:"How are you?"},
+    {minang:"Karano",indo:"Karena",eng:"Because"},
+    {minang:"Lamo",indo:"Lama",eng:"Long time"},
+    {minang:"Sanang",indo:"Senang / Bahagia",eng:"Happy"},
+  ];
+
+  const quizData = [
+    {q:"What does 'Minangkabau' literally mean?",options:["Land of Gold","Victorious Buffalo","Mountain People","River Kingdom"],answer:1,fact:"The name comes from 'Minang' (victorious) and 'Kabau' (buffalo) — from the famous buffalo fight legend."},
+    {q:"Minangkabau society is unique because it is:",options:["Patrilineal","Bilateral","Matrilineal","Patriarchal"],answer:2,fact:"Minangkabau is the world's largest matrilineal society — property passes through the mother's line."},
+    {q:"What is the name of the traditional Minangkabau house?",options:["Joglo","Rumah Gadang","Tongkonan","Lamin"],answer:1,fact:"Rumah Gadang (big house) is famous for its distinctive curved roofline shaped like buffalo horns."},
+    {q:"Which food was voted the world's most delicious?",options:["Sate Padang","Gulai Ikan","Rendang","Nasi Kapau"],answer:2,fact:"Rendang has been voted #1 on CNN Travel's 'World's 50 Most Delicious Foods' multiple times!"},
+    {q:"What is the traditional Minangkabau plate dance called?",options:["Tari Kecak","Tari Saman","Tari Piring","Tari Topeng"],answer:2,fact:"Tari Piring (Plate Dance) is performed with plates, symbolizing gratitude for a bountiful harvest."},
+    {q:"What is 'Merantau' in Minangkabau culture?",options:["A wedding ceremony","A journey away from home","A harvest festival","A music style"],answer:1,fact:"Merantau is the tradition of young men leaving home to seek knowledge, wealth, and experience."},
+    {q:"Which small bronze instrument is central to Minangkabau music?",options:["Angklung","Talempong","Gamelan","Sasando"],answer:1,fact:"Talempong are small bronze gongs producing bright, rhythmic melodies at ceremonies."},
+    {q:"Where is the Pagaruyung Kingdom palace located?",options:["Padang","Bukittinggi","Batusangkar","Solok"],answer:2,fact:"Istana Pagaruyung in Batusangkar is a reconstructed royal palace — top tourist attraction."},
+    {q:"What famous clock tower is the icon of Bukittinggi?",options:["Jam Raksasa","Menara Kudus","Jam Gadang","Menara Siger"],answer:2,fact:"Jam Gadang (Big Clock) was built in 1926 and is the most recognizable landmark in Bukittinggi."},
+    {q:"Which legend tells of a son turned to stone in West Sumatra?",options:["Si Pitung","Sangkuriang","Malin Kundang","Lutung Kasarung"],answer:2,fact:"Malin Kundang denied his mother and was cursed into stone at Air Manis beach in Padang."},
+  ];
+
+  const searchIndex = [
+    {title:"History",section:"history",icon:"fa-scroll"},{title:"Culture & Arts",section:"culture",icon:"fa-palette"},
+    {title:"Traditional Foods",section:"food",icon:"fa-utensils"},{title:"Tourism & Nature",section:"tourism",icon:"fa-mountain"},
+    {title:"Traditional Clothes",section:"clothes",icon:"fa-shirt"},
+    {title:"Legends & Folklore",section:"legend",icon:"fa-book"},{title:"Photo Gallery",section:"gallery",icon:"fa-images"},
+    {title:"Peta Wisata",section:"map-section",icon:"fa-map"},{title:"Bahasa Minang Flashcard",section:"flashcard",icon:"fa-cards-blank"},
+    {title:"Culture Quiz",section:"quiz",icon:"fa-brain"},
+    {title:"Rendang",section:"food",icon:"fa-utensils"},{title:"Rumah Gadang",section:"culture",icon:"fa-house"},
+    {title:"Malin Kundang",section:"legend",icon:"fa-book"},{title:"Jam Gadang",section:"map-section",icon:"fa-clock"},
+    {title:"Tari Piring",section:"culture",icon:"fa-music"},{title:"Danau Maninjau",section:"tourism",icon:"fa-water"},
+    {title:"Harau Valley",section:"tourism",icon:"fa-mountain"},
+    {title:"Booking Tour",section:"booking",icon:"fa-ticket"},{title:"Pesan Tiket",section:"booking",icon:"fa-ticket"},{title:"Pemesanan",section:"booking",icon:"fa-ticket"},
+  ];
+
+  /* ========= LOADER & INIT ========= */
+  window.addEventListener('DOMContentLoaded',()=>{
+    setTimeout(()=>{
+      document.getElementById('loader').style.display='none';
+      evaluateAccessControl();
+    }, 1500);
+  });
+
+  /* ========= AUTH ========= */
+  function evaluateAccessControl(){
+    const user=localStorage.getItem('currentUser');
+    const gate=document.getElementById('authGatekeeper');
+    const main=document.getElementById('mainWebsiteWrapper');
+    if(user){
+      gate.style.display='none'; main.style.display='block';
+      const data=JSON.parse(localStorage.getItem(`user_${user}`)||'{}');
+      updateUserBadge(user,data);
+      renderAllDynamicContent();
+      initQuiz(); initStatsCounter(); initScrollReveal(); initParticles();
+    } else {
+      main.style.display='none'; gate.style.display='flex';
+    }
+  }
+
+  function updateUserBadge(user,data){
+    const initial=user[0].toUpperCase();
+    const avatarUrl=data.avatar;
+    document.getElementById('userAvatarNav').innerHTML = avatarUrl?`<img src="${avatarUrl}">`:initial;
+    document.getElementById('userNameNav').textContent=data.name||user;
+    document.getElementById('dropdownName').textContent=data.name||user;
+    document.getElementById('dropdownSince').textContent=`@${user}`;
+    document.getElementById('dropdownAvatarInitial').textContent=initial;
+    document.getElementById('dropdownAvatar').innerHTML = (avatarUrl?`<img src="${avatarUrl}">`:`<span>${initial}</span>`) + `<div class="avatar-edit"><i class="fa-solid fa-camera"></i></div>`;
+    document.getElementById('dropdownAvatar').onclick=()=>document.getElementById('avatarUploadInput').click();
+  }
+
+  function handleAvatarUpload(e){
+    const file=e.target.files[0]; if(!file)return;
+    const reader=new FileReader();
+    reader.onload=function(ev){
+      const user=localStorage.getItem('currentUser');
+      const data=JSON.parse(localStorage.getItem(`user_${user}`)||'{}');
+      data.avatar=ev.target.result;
+      localStorage.setItem(`user_${user}`,JSON.stringify(data));
+      updateUserBadge(user,data);
+      showToast('✅ Foto profil diperbarui!');
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function switchGateForm(type){
+    document.getElementById('gateLoginBlock').style.display=type==='login'?'block':'none';
+    document.getElementById('gateRegBlock').style.display=type==='reg'?'block':'none';
+    document.getElementById('tabLogin').classList.toggle('active',type==='login');
+    document.getElementById('tabReg').classList.toggle('active',type==='reg');
+    document.getElementById('gateAlert').className='gate-alert'; document.getElementById('gateAlert').style.display='none';
+  }
+
+  function showGateAlert(msg,type){
+    const el=document.getElementById('gateAlert');
+    el.className=`gate-alert ${type}`; el.innerHTML=`<i class="fa-solid fa-${type==='error'?'circle-exclamation':'circle-check'}"></i> ${msg}`;
+    el.style.display='flex';
+  }
+
+  function handleGateRegister(){
+    const name=document.getElementById('gateRegName').value.trim();
+    const user=document.getElementById('gateRegUser').value.trim();
+    const pass=document.getElementById('gateRegPass').value.trim();
+    if(!name||!user||!pass){showGateAlert('Mohon isi seluruh kolom registrasi.','error');return;}
+    if(pass.length<6){showGateAlert('Password minimal 6 karakter.','error');return;}
+    if(localStorage.getItem(`user_${user}`)){showGateAlert('Username sudah digunakan. Pilih username lain.','error');return;}
+    localStorage.setItem(`user_${user}`,JSON.stringify({name,pass,since:new Date().toLocaleDateString('id-ID')}));
+    showGateAlert('Akun berhasil dibuat! Silakan masuk.','success');
+    setTimeout(()=>switchGateForm('login'),1500);
+    document.getElementById('gateRegName').value=''; document.getElementById('gateRegUser').value=''; document.getElementById('gateRegPass').value='';
+  }
+
+  function handleGateLogin(){
+    const user=document.getElementById('gateUser').value.trim();
+    const pass=document.getElementById('gatePass').value.trim();
+    if(!user||!pass){showGateAlert('Masukkan username dan password.','error');return;}
+    const stored=localStorage.getItem(`user_${user}`);
+    if(stored){
+      const data=JSON.parse(stored);
+      if(data.pass===pass){ localStorage.setItem('currentUser',user); evaluateAccessControl(); }
+      else showGateAlert('Password salah. Coba lagi.','error');
+    } else showGateAlert('Username belum terdaftar. Silakan registrasi.','error');
+  }
+
+  function handleLogout(){
+    if(confirm('Yakin ingin keluar?')){
+      localStorage.removeItem('currentUser');
+      document.getElementById('mainWebsiteWrapper').style.display='none';
+      evaluateAccessControl();
+    }
+  }
+
+  /* ========= SCROLL & PROGRESS ========= */
+  window.onscroll=function(){
+    const pct=(window.scrollY/(document.documentElement.scrollHeight-window.innerHeight))*100;
+    document.getElementById('progress-bar').style.width=pct+'%';
+    const btt=document.getElementById('back-to-top');
+    if(btt) window.scrollY>500?btt.classList.add('visible'):btt.classList.remove('visible');
+  };
+
+  /* ========= NAVIGATION ========= */
+  function showSection(id){
+    document.querySelectorAll('section').forEach(s=>s.classList.remove('active'));
+    const sec=document.getElementById(id);
+    if(sec){ sec.classList.add('active'); setTimeout(initScrollReveal,100); }
+    window.scrollTo({top:document.getElementById('mainNav')?.offsetTop||0,behavior:'smooth'});
+  }
+  function scrollToNav(){ document.getElementById('mainNav').scrollIntoView({behavior:'smooth'}); }
+
+  /* ========= DARK MODE ========= */
+  function toggleDark(){
+    const html=document.documentElement;
+    const next=html.dataset.theme==='dark'?'light':'dark';
+    html.dataset.theme=next;
+    document.getElementById('darkBtn').innerHTML=next==='dark'?'☀️ <span>Light Mode</span>':'🌙 <span>Dark Mode</span>';
+    showToast(next==='dark'?'🌙 Dark mode aktif':'☀️ Light mode aktif');
+  }
+
+  /* ========= TOAST ========= */
+  function showToast(msg){
+    const t=document.getElementById('toast');
+    if(t){t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
+  }
+
+  /* ========= BOOKMARKS ========= */
+  function toggleBookmark(btn,name){
+    btn.classList.toggle('saved');
+    if(btn.classList.contains('saved')){btn.textContent='⭐';showToast(`✅ "${name}" disimpan!`);}
+    else{btn.textContent='🔖';showToast(`🗑️ "${name}" dihapus dari favorit.`);}
+  }
+
+  /* ========= PARTICLES ========= */
+  function initParticles(){
+    const canvas=document.getElementById('particles-canvas');
+    if(!canvas)return;
+    const ctx=canvas.getContext('2d');
+    canvas.width=window.innerWidth; canvas.height=window.innerHeight;
+    const particles=Array.from({length:55},()=>({
+      x:Math.random()*canvas.width, y:Math.random()*canvas.height,
+      r:Math.random()*2+0.5, vx:(Math.random()-.5)*.4, vy:(Math.random()-.5)*.4,
+      alpha:Math.random()*.5+.2
+    }));
+    function draw(){
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+      particles.forEach(p=>{
+        p.x+=p.vx; p.y+=p.vy;
+        if(p.x<0)p.x=canvas.width; if(p.x>canvas.width)p.x=0;
+        if(p.y<0)p.y=canvas.height; if(p.y>canvas.height)p.y=0;
+        ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+        ctx.fillStyle=`rgba(255,183,3,${p.alpha})`; ctx.fill();
+      });
+      particles.forEach((p,i)=>{
+        particles.slice(i+1).forEach(q=>{
+          const d=Math.hypot(p.x-q.x,p.y-q.y);
+          if(d<100){ ctx.beginPath(); ctx.moveTo(p.x,p.y); ctx.lineTo(q.x,q.y); ctx.strokeStyle=`rgba(255,183,3,${.15*(1-d/100)})`; ctx.stroke(); }
+        });
+      });
+      requestAnimationFrame(draw);
+    }
+    draw();
+    window.addEventListener('resize',()=>{canvas.width=window.innerWidth;canvas.height=window.innerHeight;});
+  }
+
+  /* ========= STATS COUNTER ========= */
+  function initStatsCounter(){
+    const nums=document.querySelectorAll('.stat-num');
+    const obs=new IntersectionObserver(entries=>{
+      entries.forEach(entry=>{
+        if(entry.isIntersecting){
+          const el=entry.target, target=+el.dataset.target, dur=1800;
+          const start=performance.now();
+          function update(now){ const t=Math.min((now-start)/dur,1); el.textContent=Math.round(t*target)+(target>=300?'+':''); if(t<1)requestAnimationFrame(update); }
+          requestAnimationFrame(update); obs.unobserve(el);
+        }
+      });
+    },{threshold:.5});
+    nums.forEach(n=>obs.observe(n));
+  }
+
+  /* ========= SCROLL REVEAL ========= */
+  function initScrollReveal(){
+    const obs=new IntersectionObserver(entries=>{
+      entries.forEach(e=>{ if(e.isIntersecting)e.target.classList.add('visible'); });
+    },{threshold:.15});
+    document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+  }
+
+  /* ========= RENDER CONTENT (with local img + fallback) ========= */
+  function renderAllDynamicContent(){
+    const tl=document.getElementById('timelineContainer');
+    if(tl) tl.innerHTML=siteData.history.map(h=>`
+      <div class="timeline-item reveal"><div class="timeline-dot"></div>
+        <div class="timeline-card"><span class="year">${h.year}</span><h4>${h.title}</h4><p>${h.desc}</p></div>
+      </div>`).join('');
+
+    ['culture','food','tourism','clothes','legend'].forEach(cat=>{
+      const c=document.getElementById(`cards-${cat}`);
+      if(c&&siteData[cat]) c.innerHTML=siteData[cat].map(item=>`
+        <div class="card reveal">
+          <button class="bookmark-btn" onclick="toggleBookmark(this,'${item.name}')">🔖</button>
+          <img src="img/${item.img}" alt="${item.name}" loading="lazy" onerror="imgFallback(this,'${item.fallback}')">
+          <div class="card-content"><h3>${item.name}</h3><p>${item.desc}</p></div>
+        </div>`).join('');
+    });
+
+    renderGallery('all');
+
+    const pl=document.getElementById('placeList');
+    if(pl) pl.innerHTML=mapPlaces.map((p,i)=>`
+      <div class="map-place-item" id="place-${i}" onclick="selectPlace(${i})">
+        <div class="map-place-icon" style="background:${p.color==='red'?'#fff0f0':p.color==='blue'?'#e3f2fd':p.color==='green'?'#e8f5e9':'#fff3e0'};">${p.emoji}</div>
+        <div class="map-place-info"><h5>${p.name}</h5><p>${p.type}</p></div>
+      </div>`).join('');
+
+    const fg=document.getElementById('flashcardGrid');
+    if(fg) fg.innerHTML=flashcards.map(fc=>`
+      <div class="flashcard" onclick="this.classList.toggle('flipped')">
+        <div class="flashcard-inner">
+          <div class="flashcard-front"><div class="fc-hint">Bahasa Minang</div><div class="fc-minang">${fc.minang}</div></div>
+          <div class="flashcard-back"><div class="fc-hint">Artinya</div><div class="fc-indo">${fc.indo}</div><div class="fc-eng">${fc.eng}</div></div>
+        </div>
+      </div>`).join('');
+
+  }
+
+  /* ========= GALLERY (filter + grid render) ========= */
+  let currentGalleryFilter='all';
+  function renderGallery(filter){
+    currentGalleryFilter=filter;
+    const gg=document.getElementById('galleryGrid');
+    const items=filter==='all'?siteData.gallery:siteData.gallery.filter(g=>g.cat===filter);
+    if(gg) gg.innerHTML=items.map((img)=>{
+      const realIdx=siteData.gallery.indexOf(img);
+      return `<div class="gallery-item reveal" onclick="openLightbox(${realIdx})">
+        <img src="img/${img.src}" alt="${img.caption}" loading="lazy" onerror="imgFallback(this,'${img.fallback}')">
+        <div class="gallery-overlay"><span>${img.caption}</span></div>
+      </div>`;
+    }).join('');
+    setTimeout(initScrollReveal,50);
+  }
+  function filterGallery(cat,btn){
+    document.querySelectorAll('.gallery-toolbar button').forEach(b=>b.classList.remove('active'));
+    if(btn)btn.classList.add('active');
+    renderGallery(cat);
+  }
+
+  /* ========= MAP ========= */
+  function selectPlace(idx){
+    document.querySelectorAll('.map-place-item').forEach(el=>el.classList.remove('active'));
+    const item=document.getElementById(`place-${idx}`);
+    if(item){item.classList.add('active');item.scrollIntoView({behavior:'smooth',block:'nearest'});}
+    const p=mapPlaces[idx];
+    showToast(`📍 ${p.name} — ${p.type}`);
+  }
+
+  /* ========= LIGHTBOX ========= */
+  let lbIdx=0;
+  function openLightbox(idx){
+    lbIdx=idx;
+    const img=document.getElementById('lb-img');
+    img.src=`img/${siteData.gallery[idx].src}`;
+    img.onerror=()=>imgFallback(img,siteData.gallery[idx].fallback);
+    document.getElementById('lb-caption').textContent=siteData.gallery[idx].caption;
+    document.getElementById('lightbox').classList.add('open');
+    document.body.style.overflow='hidden';
+  }
+  function closeLightbox(){document.getElementById('lightbox').classList.remove('open');document.body.style.overflow='';}
+  function lbNav(dir){
+    lbIdx=(lbIdx+dir+siteData.gallery.length)%siteData.gallery.length;
+    openLightbox(lbIdx);
+  }
+  document.addEventListener('DOMContentLoaded',()=>{
+    const lb=document.getElementById('lightbox');
+    if(lb)lb.addEventListener('click',function(e){if(e.target===this)closeLightbox();});
+  });
+  document.addEventListener('keydown',e=>{
+    const lbEl=document.getElementById('lightbox');
+    if(lbEl && lbEl.classList.contains('open')){
+      if(e.key==='Escape')closeLightbox();
+      if(e.key==='ArrowRight')lbNav(1);
+      if(e.key==='ArrowLeft')lbNav(-1);
+    }
+  });
+
+  /* ========= SLIDESHOW MODE ========= */
+  let slideshowIdx=0, slideshowTimer=null, slideshowPlaying=true;
+  function startSlideshow(){
+    slideshowIdx=0; slideshowPlaying=true;
+    document.getElementById('slideshowOverlay').classList.add('open');
+    document.getElementById('slideshowDots').innerHTML=siteData.gallery.map((_,i)=>`<div class="slideshow-dot ${i===0?'active':''}" id="sdot-${i}"></div>`).join('');
+    renderSlideshowFrame();
+    clearInterval(slideshowTimer);
+    slideshowTimer=setInterval(()=>slideshowNav(1),3500);
+    document.getElementById('slideshowPlayBtn').innerHTML='<i class="fa-solid fa-pause"></i>';
+  }
+  function stopSlideshow(){
+    document.getElementById('slideshowOverlay').classList.remove('open');
+    clearInterval(slideshowTimer);
+  }
+  function renderSlideshowFrame(){
+    const item=siteData.gallery[slideshowIdx];
+    const img=document.getElementById('slideshowImg');
+    img.src=`img/${item.src}`;
+    img.onerror=()=>imgFallback(img,item.fallback);
+    document.getElementById('slideshowCaption').textContent=item.caption;
+    document.querySelectorAll('.slideshow-dot').forEach((d,i)=>d.classList.toggle('active',i===slideshowIdx));
+  }
+  function slideshowNav(dir){
+    slideshowIdx=(slideshowIdx+dir+siteData.gallery.length)%siteData.gallery.length;
+    renderSlideshowFrame();
+  }
+  function toggleSlideshowPlay(){
+    slideshowPlaying=!slideshowPlaying;
+    const btn=document.getElementById('slideshowPlayBtn');
+    if(slideshowPlaying){ clearInterval(slideshowTimer); slideshowTimer=setInterval(()=>slideshowNav(1),3500); btn.innerHTML='<i class="fa-solid fa-pause"></i>'; }
+    else{ clearInterval(slideshowTimer); btn.innerHTML='<i class="fa-solid fa-play"></i>'; }
+  }
+
+  /* ========= SEARCH ========= */
+  function handleSearch(q){
+    const box=document.getElementById('searchResults');
+    if(!q.trim()){box.style.display='none';return;}
+    const res=searchIndex.filter(i=>i.title.toLowerCase().includes(q.toLowerCase())).slice(0,6);
+    if(!res.length){box.style.display='none';return;}
+    box.innerHTML=res.map(r=>`<div class="search-result-item" onclick="showSection('${r.section}');closeSearch()"><i class="fa-solid ${r.icon}"></i>${r.title}</div>`).join('');
+    box.style.display='block';
+  }
+  function closeSearch(){document.getElementById('searchResults').style.display='none';}
+
+  /* ========= QUIZ ========= */
+  let currentQ=0,score=0,answered=false;
+  function initQuiz(){currentQ=0;score=0;answered=false;document.getElementById('quiz-body').style.display='block';document.getElementById('quiz-result').style.display='none';renderQuestion();}
+  function renderQuestion(){
+    const q=quizData[currentQ];
+    document.getElementById('q-label').textContent=`Question ${currentQ+1} of ${quizData.length}`;
+    document.getElementById('q-score-live').textContent=`Score: ${score}`;
+    document.getElementById('q-progress').style.width=`${((currentQ+1)/quizData.length)*100}%`;
+    document.getElementById('q-text').textContent=q.q;
+    document.getElementById('q-feedback').className='quiz-feedback';
+    document.getElementById('q-next').disabled=true;
+    document.getElementById('q-next').textContent='Next Question →';
+    answered=false;
+    const c=document.getElementById('q-options'); c.innerHTML='';
+    q.options.forEach((opt,i)=>{const b=document.createElement('button');b.className='quiz-option';b.textContent=opt;b.onclick=()=>selectAnswer(i);c.appendChild(b);});
+  }
+  function selectAnswer(chosen){
+    if(answered)return; answered=true;
+    const q=quizData[currentQ],opts=document.querySelectorAll('.quiz-option'),fb=document.getElementById('q-feedback');
+    opts.forEach(o=>o.disabled=true);
+    if(chosen===q.answer){score++;opts[chosen].classList.add('correct');fb.className='quiz-feedback correct';fb.textContent='✅ Correct! '+q.fact;}
+    else{opts[chosen].classList.add('wrong');opts[q.answer].classList.add('correct');fb.className='quiz-feedback wrong';fb.textContent='❌ Not quite. '+q.fact;}
+    document.getElementById('q-score-live').textContent=`Score: ${score}`;
+    document.getElementById('q-next').disabled=false;
+    if(currentQ===quizData.length-1)document.getElementById('q-next').textContent='See Results 🏆';
+  }
+  function nextQuestion(){currentQ++;if(currentQ>=quizData.length)showResult();else renderQuestion();}
+  function showResult(){
+    document.getElementById('quiz-body').style.display='none';document.getElementById('quiz-result').style.display='block';
+    document.getElementById('final-score').textContent=score;
+    const titles=['🌱 Baru Mulai!','🌱 Baru Mulai!','🌱 Baru Mulai!','🌱 Baru Mulai!','🌱 Baru Mulai!','🥈 Cukup Baik!','🥈 Cukup Baik!','🥇 Hampir Ahli!','🥇 Hampir Ahli!','🥇 Hampir Ahli!','🏆 Minangkabau Expert!'];
+    const descs=['Jangan menyerah! Jelajahi website ini lebih banyak.','','','','','Pengetahuan yang bagus! Terus belajar.','','Sangat baik! Kamu hampir menjadi ahli.','','','Sempurna! Kamu benar-benar ahli Minangkabau! 🎉'];
+    document.getElementById('result-title').textContent=titles[score]||'';
+    document.getElementById('result-desc').textContent=descs[score]||`Skor kamu: ${score}/10. Terus tingkatkan!`;
+    saveQuizScore(score);
+    renderLeaderboard();
+  }
+  function restartQuiz(){initQuiz();}
+
+  /* ========= LEADERBOARD ========= */
+  function saveQuizScore(s){
+    const user=localStorage.getItem('currentUser'); if(!user)return;
+    const data=JSON.parse(localStorage.getItem(`user_${user}`)||'{}');
+    const board=JSON.parse(localStorage.getItem('quizLeaderboard')||'{}');
+    if(!board[user] || s>board[user].score){
+      board[user]={name:data.name||user, score:s, date:new Date().toLocaleDateString('id-ID')};
+      localStorage.setItem('quizLeaderboard',JSON.stringify(board));
+    }
+  }
+  function renderLeaderboard(){
+    const board=JSON.parse(localStorage.getItem('quizLeaderboard')||'{}');
+    const currentUser=localStorage.getItem('currentUser');
+    const sorted=Object.entries(board).map(([u,d])=>({user:u,...d})).sort((a,b)=>b.score-a.score).slice(0,5);
+    const list=document.getElementById('leaderboardList');
+    if(!list)return;
+    if(!sorted.length){ list.innerHTML='<p style="color:var(--text-muted);font-size:13px;">Belum ada skor tersimpan. Jadilah yang pertama!</p>'; return; }
+    list.innerHTML=sorted.map((row,i)=>`
+      <div class="lb-row ${i===0?'top1':i===1?'top2':i===2?'top3':''} ${row.user===currentUser?'me':''}">
+        <div class="lb-rank">${i+1}</div>
+        <div class="lb-name">${row.name}${row.user===currentUser?' (Kamu)':''}</div>
+        <div class="lb-score">${row.score}/10</div>
+      </div>`).join('');
+  }
+
+  /* ========= BOOKING SYSTEM ========= */
+  const TOUR_GUIDE_WA = '6282298315493'; // Nomor WA tour guide
+
+  const packages = {
+    '1day': {name:'City Explorer 1 Hari',price:350000,days:1},
+    '3day': {name:'Nature & Culture 3 Hari',price:850000,days:3},
+    '5day': {name:'Full Minangkabau 5 Hari',price:1500000,days:5},
+  };
+  const hotels = {
+    'none':     {name:'Tanpa Penginapan',price:0},
+    'standard': {name:'Hotel Standart ★★★',price:250000},
+    'superior': {name:'Hotel Superior ★★★★',price:450000},
+    'luxury':   {name:'Hotel Mewah ★★★★★',price:850000},
+  };
+  const payDetails = {
+    bca:    {name:'BCA Transfer',acct:'1234567890'},
+    mandiri:{name:'Mandiri Transfer',acct:'0987654321'},
+    gopay:  {name:'GoPay',acct:'081234567890'},
+    dana:   {name:'DANA',acct:'081234567890'},
+    ovo:    {name:'OVO',acct:'081234567890'},
+    qris:   {name:'QRIS',acct:'Scan QRIS di bawah ini'},
+  };
+  const PROMO_CODES = {
+    'MINANG10': {percent:10, label:'Diskon 10%'},
+    'WISATA5':  {percent:5,  label:'Diskon 5%'},
+    'NEWUSER15':{percent:15, label:'Diskon Member Baru 15%'},
+  };
+  const INSURANCE_PRICE = 25000; // per orang
+
+  let bkState = {
+    pkg: null, hotel: 'none', pax: 2,
+    date: '', payment: null,
+    name:'', wa:'', email:'', city:'', special:'',
+    insurance:false, promoCode:'', promoDiscount:0,
+    agreedTnC:false,
+    step: 1
+  };
+
+  // Set min date to tomorrow
+  window.addEventListener('DOMContentLoaded', ()=>{
+    const d = new Date(); d.setDate(d.getDate()+1);
+    const minDate = d.toISOString().split('T')[0];
+    const bkDate = document.getElementById('bk-date');
+    if(bkDate){ bkDate.min = minDate; bkDate.value = minDate; bkState.date = minDate; }
+  });
+
+  function selectPackage(id, el){
+    bkState.pkg = id;
+    document.querySelectorAll('.pkg-card').forEach(c=>c.classList.remove('selected'));
+    el.classList.add('selected');
+    calcTotal();
+  }
+
+  function selectHotel(id, el){
+    bkState.hotel = id;
+    document.querySelectorAll('.hotel-card').forEach(c=>c.classList.remove('selected'));
+    el.classList.add('selected');
+    calcTotal();
+  }
+
+  function selectPayment(id, el){
+    bkState.payment = id;
+    document.querySelectorAll('.pay-method').forEach(c=>c.classList.remove('selected'));
+    el.classList.add('selected');
+    const pd = payDetails[id];
+    document.getElementById('bd-bank').textContent = pd.name;
+    document.getElementById('bd-acct').innerHTML = pd.acct + '<button class="copy-acct" onclick="copyAcct()">Salin</button>';
+    document.getElementById('bd-total').textContent = formatRp(calcTotalAmount());
+    document.getElementById('bankDetail').classList.add('show');
+  }
+
+  function changePax(d){
+    bkState.pax = Math.max(1, Math.min(20, bkState.pax + d));
+    document.getElementById('paxCount').textContent = bkState.pax;
+    const hint=document.getElementById('groupDiscountHint');
+    if(hint) hint.textContent = bkState.pax>=5 ? '🎉 Selamat! Kamu dapat Diskon Grup 5% untuk paket wisata.' : 'Pesan untuk 5 orang atau lebih dan dapatkan Diskon Grup 5%!';
+    calcTotal();
+  }
+
+  function computeBookingBreakdown(){
+    if(!bkState.pkg) return null;
+    const pkg = packages[bkState.pkg];
+    const hotel = hotels[bkState.hotel];
+    const pkgTotal = pkg.price * bkState.pax;
+    const nights = bkState.hotel==='none' ? 0 : pkg.days;
+    const rooms = Math.ceil(bkState.pax/2);
+    const hotelTotal = hotel.price * nights * rooms;
+    const groupDiscountPct = bkState.pax>=5 ? 5 : 0;
+    const groupDiscount = Math.round(pkgTotal * groupDiscountPct/100);
+    const subtotalAfterGroup = pkgTotal - groupDiscount + hotelTotal;
+    const promo = PROMO_CODES[bkState.promoCode];
+    const promoPct = promo ? promo.percent : 0;
+    const promoDiscount = Math.round(subtotalAfterGroup * promoPct/100);
+    const insuranceTotal = bkState.insurance ? INSURANCE_PRICE * bkState.pax : 0;
+    const afterDiscounts = subtotalAfterGroup - promoDiscount + insuranceTotal;
+    const admin = Math.round(afterDiscounts * 0.03);
+    const grand = afterDiscounts + admin;
+    return {pkg,hotel,pkgTotal,nights,rooms,hotelTotal,groupDiscountPct,groupDiscount,promo,promoPct,promoDiscount,insuranceTotal,admin,grand};
+  }
+
+  function calcTotalAmount(){
+    const b = computeBookingBreakdown();
+    return b ? b.grand : 0;
+  }
+
+  function calcTotal(){
+    bkState.date = document.getElementById('bk-date')?.value || bkState.date;
+  }
+
+  function buildSummaryHTML(showDiscount=false){
+    const b = computeBookingBreakdown();
+    if(!b) return '<p style="color:var(--text-muted);font-size:13px;">Silakan pilih paket terlebih dahulu.</p>';
+    return `
+      <div class="order-row"><span class="label">📦 ${b.pkg.name}</span><span class="val">${formatRp(b.pkg.price)} × ${bkState.pax} orang</span></div>
+      <div class="order-row"><span class="label">Subtotal Paket</span><span class="val">${formatRp(b.pkgTotal)}</span></div>
+      ${b.groupDiscount>0?`<div class="order-row"><span class="label">🎉 Diskon Grup (${b.groupDiscountPct}%)</span><span class="val" style="color:#2e7d32;">-${formatRp(b.groupDiscount)}</span></div>`:''}
+      ${b.hotelTotal>0?`<div class="order-row"><span class="label">🏨 ${b.hotel.name}</span><span class="val">${formatRp(b.hotel.price)} × ${b.nights} malam × ${b.rooms} kamar</span></div><div class="order-row"><span class="label">Subtotal Hotel</span><span class="val">${formatRp(b.hotelTotal)}</span></div>`:''}
+      ${b.insuranceTotal>0?`<div class="order-row"><span class="label">🛡️ Asuransi Perjalanan</span><span class="val">${formatRp(INSURANCE_PRICE)} × ${bkState.pax} orang</span></div>`:''}
+      ${b.promoDiscount>0?`<div class="order-row"><span class="label">🏷️ Promo "${bkState.promoCode}" (${b.promoPct}%)</span><span class="val" style="color:#2e7d32;">-${formatRp(b.promoDiscount)}</span></div>`:''}
+      <div class="order-row"><span class="label">Biaya Admin (3%)</span><span class="val">${formatRp(b.admin)}</span></div>
+      <div class="order-row"><span class="label" style="font-weight:700;color:var(--text);">💰 TOTAL</span><span class="val" style="font-size:18px;color:#7b1113;">${formatRp(b.grand)}</span></div>
+    `;
+  }
+
+  function toggleInsurance(checked){
+    bkState.insurance = checked;
+    const sr=document.getElementById('summaryRows'); if(sr) sr.innerHTML = buildSummaryHTML();
+  }
+
+  function applyPromo(){
+    const code = document.getElementById('bk-promo').value.trim().toUpperCase();
+    const msgEl = document.getElementById('promoMsg');
+    if(!code){ bkState.promoCode=''; msgEl.textContent=''; document.getElementById('summaryRows').innerHTML=buildSummaryHTML(); return; }
+    if(PROMO_CODES[code]){
+      bkState.promoCode = code;
+      msgEl.style.color='#2e7d32';
+      msgEl.textContent = `✅ Kode promo diterapkan! ${PROMO_CODES[code].label}`;
+      showToast(`🏷️ Promo "${code}" berhasil diterapkan!`);
+    } else {
+      bkState.promoCode = '';
+      msgEl.style.color='#c62828';
+      msgEl.textContent = '❌ Kode promo tidak valid.';
+    }
+    document.getElementById('summaryRows').innerHTML = buildSummaryHTML();
+  }
+
+  function toggleTnC(checked){
+    bkState.agreedTnC = checked;
+    const btnPay=document.getElementById('btnConfirmPay');
+    if(btnPay) btnPay.disabled = !checked;
+  }
+
+  function formatRp(n){ return 'Rp '+n.toLocaleString('id-ID'); }
+
+  function goStep(n){
+    // Validation
+    if(n===2 && !bkState.pkg){ showToast('⚠️ Pilih paket wisata dulu!'); return; }
+    if(n===2 && !document.getElementById('bk-date')?.value){ showToast('⚠️ Pilih tanggal keberangkatan!'); return; }
+    if(n===4){
+      bkState.name = document.getElementById('bk-name')?.value.trim();
+      bkState.wa   = document.getElementById('bk-wa')?.value.trim();
+      bkState.email= document.getElementById('bk-email')?.value.trim();
+      bkState.city = document.getElementById('bk-city')?.value.trim();
+      bkState.special = document.getElementById('bk-special')?.value.trim();
+      if(!bkState.name||!bkState.wa){ showToast('⚠️ Nama dan WhatsApp wajib diisi!'); return; }
+      if(!/^0[0-9]{8,14}$/.test(bkState.wa.replace(/[\s-]/g,''))){ showToast('⚠️ Format nomor WhatsApp tidak valid (gunakan 08xxxxxxxxxx).'); return; }
+      if(bkState.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(bkState.email)){ showToast('⚠️ Format email tidak valid.'); return; }
+    }
+    if(n===5 && !bkState.payment){ showToast('⚠️ Pilih metode pembayaran!'); return; }
+
+    bkState.step = n;
+    // Update summary if going to step 3
+    if(n===3){
+      const sr = document.getElementById('summaryRows');
+      if(sr) sr.innerHTML = buildSummaryHTML();
+    }
+    if(n===4){
+      const fr = document.getElementById('finalRows');
+      if(fr) fr.innerHTML = buildSummaryHTML();
+      const tncInput=document.getElementById('bk-tnc'); if(tncInput) tncInput.checked = bkState.agreedTnC;
+      const btnPay=document.getElementById('btnConfirmPay'); if(btnPay) btnPay.disabled = !bkState.agreedTnC;
+    }
+
+    // Hide all panels
+    document.querySelectorAll('.booking-step-panel').forEach(p=>p.classList.remove('active'));
+    document.getElementById(`bstep${n}`).classList.add('active');
+
+    // Update step circles
+    for(let i=1;i<=5;i++){
+      const sc = document.getElementById(`sc${i}`);
+      if(!sc) continue;
+      sc.classList.remove('active','done');
+      if(i<n) sc.classList.add('done'), sc.textContent='✓';
+      else if(i===n) sc.classList.add('active'), sc.textContent=i;
+      else sc.textContent=i;
+    }
+    for(let i=1;i<=4;i++){
+      const sl = document.getElementById(`sl${i}`);
+      if(sl) sl.classList.toggle('done', i<n);
+    }
+
+    // Scroll to booking card top
+    document.querySelector('.booking-card')?.scrollIntoView({behavior:'smooth',block:'start'});
+  }
+
+  function confirmPayment(){
+    if(!bkState.agreedTnC){ showToast('⚠️ Harap setujui Syarat & Ketentuan terlebih dahulu.'); return; }
+    // Generate booking ref
+    const ref = 'MIN-' + Date.now().toString().slice(-6);
+    document.getElementById('bookingRef').textContent = ref;
+
+    // Save to localStorage
+    const user = localStorage.getItem('currentUser') || 'guest';
+    const existing = JSON.parse(localStorage.getItem(`bookings_${user}`) || '[]');
+    const pkg = packages[bkState.pkg];
+    existing.unshift({
+      ref, pkg: pkg.name, hotel: hotels[bkState.hotel].name,
+      date: bkState.date, pax: bkState.pax,
+      insurance: bkState.insurance, promoCode: bkState.promoCode,
+      total: calcTotalAmount(), payment: bkState.payment,
+      name: bkState.name, wa: bkState.wa,
+      status: 'pending', ts: Date.now()
+    });
+    localStorage.setItem(`bookings_${user}`, JSON.stringify(existing.slice(0,10)));
+
+    // Countdown ke tanggal keberangkatan
+    const days = Math.max(0, Math.ceil((new Date(bkState.date) - new Date()) / 86400000));
+    const cd = document.getElementById('departureCountdown');
+    if(cd) cd.textContent = days>0 ? `🗓️ Keberangkatan dalam ${days} hari lagi` : '🗓️ Keberangkatan hari ini!';
+
+    goStep(5);
+    showToast('✅ Pemesanan berhasil! Cek WhatsApp kamu.');
+  }
+
+  function connectTourGuide(){
+    const pkg = packages[bkState.pkg] || {name:'Paket Tour'};
+    const msg = encodeURIComponent(
+      `Halo Kak! Saya ${bkState.name} ingin konfirmasi booking tour Minangkabau 🏔️
+
+` +
+      `📋 *Detail Booking:*
+` +
+      `• Ref: ${document.getElementById('bookingRef').textContent}
+` +
+      `• Paket: ${pkg.name}
+` +
+      `• Hotel: ${hotels[bkState.hotel].name}
+` +
+      `• Tanggal: ${bkState.date}
+` +
+      `• Peserta: ${bkState.pax} orang${bkState.insurance?'\n• Asuransi: Ya':''}${bkState.promoCode?`\n• Promo: ${bkState.promoCode}`:''}
+` +
+      `• Total: ${formatRp(calcTotalAmount())}
+` +
+      `• Pembayaran: ${payDetails[bkState.payment]?.name || '-'}
+
+` +
+      `Mohon dikonfirmasi ya Kak 🙏`
+    );
+    window.open(`https://wa.me/${TOUR_GUIDE_WA}?text=${msg}`, '_blank');
+  }
+
+  function downloadReceipt(){
+    const pkg = packages[bkState.pkg]||{name:'-'};
+    const win = window.open('','_blank');
+    win.document.write(`
+      <html><head><title>Bukti Booking - ${document.getElementById('bookingRef').textContent}</title>
+      <style>body{font-family:Arial,sans-serif;padding:40px;color:#333;max-width:600px;margin:auto;}
+      h1{color:#7b1113;border-bottom:2px solid #ffb703;padding-bottom:10px;}
+      table{width:100%;border-collapse:collapse;margin-top:15px;}
+      td{padding:10px;border-bottom:1px solid #eee;font-size:14px;}
+      td:first-child{color:#888;width:40%;}
+      .total{font-weight:700;color:#7b1113;font-size:16px;}
+      @media print{body{padding:20px;}}</style></head>
+      <body>
+        <h1>🏔️ Bukti Pemesanan Tour Minangkabau</h1>
+        <p style="color:#888;font-size:13px;">Dicetak: ${new Date().toLocaleString('id-ID')}</p>
+        <table>
+          <tr><td>No. Referensi</td><td><strong>${document.getElementById('bookingRef').textContent}</strong></td></tr>
+          <tr><td>Nama Pemesan</td><td>${bkState.name}</td></tr>
+          <tr><td>WhatsApp</td><td>${bkState.wa}</td></tr>
+          <tr><td>Email</td><td>${bkState.email||'-'}</td></tr>
+          <tr><td>Paket Wisata</td><td>${pkg.name}</td></tr>
+          <tr><td>Penginapan</td><td>${hotels[bkState.hotel]?.name||'-'}</td></tr>
+          <tr><td>Tanggal</td><td>${bkState.date}</td></tr>
+          <tr><td>Jumlah Peserta</td><td>${bkState.pax} orang</td></tr>
+          <tr><td>Asuransi</td><td>${bkState.insurance?'Ya':'Tidak'}</td></tr>
+          <tr><td>Kode Promo</td><td>${bkState.promoCode||'-'}</td></tr>
+          <tr><td>Metode Bayar</td><td>${payDetails[bkState.payment]?.name||'-'}</td></tr>
+          <tr><td class="total">Total Pembayaran</td><td class="total">${formatRp(calcTotalAmount())}</td></tr>
+          <tr><td>Status</td><td><span style="background:#fff3e0;color:#e65100;padding:3px 10px;border-radius:10px;font-size:12px;font-weight:700;">MENUNGGU KONFIRMASI</span></td></tr>
+        </table>
+        <p style="margin-top:25px;font-size:12px;color:#888;">Tour Guide: Ahmad Fauzi | WA: +62 812-3456-7890 | Booking akan dikonfirmasi dalam 1×24 jam.</p>
+      </body></html>
+    `);
+    win.document.close();
+    setTimeout(()=>win.print(), 300);
+  }
+
+  function viewMyBookings(){
+    document.getElementById('myBookingsWrap').style.display='block';
+    const user = localStorage.getItem('currentUser')||'guest';
+    const bookings = JSON.parse(localStorage.getItem(`bookings_${user}`)||'[]');
+    const list = document.getElementById('myBookingsList');
+    if(!list)return;
+    if(!bookings.length){ list.innerHTML='<p style="color:var(--text-muted);">Belum ada riwayat pesanan.</p>'; return; }
+    list.innerHTML = bookings.map(b=>{
+      const badgeClass = b.status==='confirmed'?'confirmed':b.status==='cancelled'?'cancelled':'pending';
+      const badgeText = b.status==='confirmed'?'✅ Dikonfirmasi':b.status==='cancelled'?'❌ Dibatalkan':'⏳ Menunggu';
+      return `
+      <div class="my-booking-item">
+        <div class="mbi-icon">🎫</div>
+        <div class="mbi-info" style="flex:1;">
+          <h5>${b.pkg}</h5>
+          <p>📅 ${b.date} · 👥 ${b.pax} orang · ${hotels[b.hotel]?.name||b.hotel}${b.insurance?' · 🛡️ Berasuransi':''}<br>
+             🔖 ${b.ref} · 💰 ${formatRp(b.total)}</p>
+          <span class="mbi-badge ${badgeClass}">${badgeText}</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <button class="mbi-wa" onclick="waBooking('${b.ref}','${b.name}','${b.pkg}','${b.date}','${b.pax}','${formatRp(b.total)}')">
+            <i class="fa-brands fa-whatsapp"></i> WA Guide
+          </button>
+          ${b.status!=='cancelled'?`<button class="mbi-wa" style="background:#e53935;" onclick="cancelBooking('${b.ref}')"><i class="fa-solid fa-ban"></i> Batalkan</button>`:''}
+        </div>
+      </div>
+    `;}).join('');
+    document.getElementById('myBookingsWrap').scrollIntoView({behavior:'smooth'});
+  }
+
+  function cancelBooking(ref){
+    if(!confirm('Yakin ingin membatalkan pesanan ini?'))return;
+    const user = localStorage.getItem('currentUser')||'guest';
+    const bookings = JSON.parse(localStorage.getItem(`bookings_${user}`)||'[]');
+    const idx = bookings.findIndex(b=>b.ref===ref);
+    if(idx>-1){ bookings[idx].status='cancelled'; localStorage.setItem(`bookings_${user}`, JSON.stringify(bookings)); }
+    showToast('🗑️ Pesanan dibatalkan.');
+    viewMyBookings();
+  }
+
+  function waBooking(ref,name,pkg,date,pax,total){
+    const msg=encodeURIComponent(`Halo Kak! Saya ${name} ingin tanya status booking saya.
+
+📋 Ref: ${ref}
+📦 Paket: ${pkg}
+📅 Tanggal: ${date}
+👥 Peserta: ${pax} orang
+💰 Total: ${total}
+
+Terima kasih 🙏`);
+    window.open(`https://wa.me/${TOUR_GUIDE_WA}?text=${msg}`,'_blank');
+  }
+
+  function resetBooking(){
+    bkState={pkg:null,hotel:'none',pax:2,date:'',payment:null,name:'',wa:'',email:'',city:'',special:'',insurance:false,promoCode:'',promoDiscount:0,agreedTnC:false,step:1};
+    document.querySelectorAll('.pkg-card,.hotel-card,.pay-method').forEach(c=>c.classList.remove('selected'));
+    document.getElementById('bankDetail').classList.remove('show');
+    document.getElementById('myBookingsWrap').style.display='none';
+    const bookInput=document.getElementById('bk-name'); if(bookInput)bookInput.value='';
+    const waInput=document.getElementById('bk-wa'); if(waInput)waInput.value='';
+    const emailInput=document.getElementById('bk-email'); if(emailInput)emailInput.value='';
+    const cityInput=document.getElementById('bk-city'); if(cityInput)cityInput.value='';
+    const specialInput=document.getElementById('bk-special'); if(specialInput)specialInput.value='';
+    const insInput=document.getElementById('bk-insurance'); if(insInput)insInput.checked=false;
+    const promoInput=document.getElementById('bk-promo'); if(promoInput)promoInput.value='';
+    const promoMsg=document.getElementById('promoMsg'); if(promoMsg)promoMsg.textContent='';
+    const tncInput=document.getElementById('bk-tnc'); if(tncInput)tncInput.checked=false;
+    const btnPay=document.getElementById('btnConfirmPay'); if(btnPay)btnPay.disabled=true;
+    const hint=document.getElementById('groupDiscountHint'); if(hint)hint.textContent='Pesan untuk 5 orang atau lebih dan dapatkan Diskon Grup 5%!';
+    document.getElementById('paxCount').textContent='2';
+    goStep(1);
+  }
+
+  function copyAcct(){
+    const txt=document.getElementById('bd-acct')?.textContent?.replace('Salin','').trim()||'';
+    navigator.clipboard.writeText(txt).then(()=>showToast('✅ Nomor disalin!'));
+  }
+
+  /* ========= BOTTOM NAV ========= */
+  function bnavGo(section, btnId){
+    showSection(section);
+    bnavActive(btnId);
+  }
+  function bnavActive(btnId){
+    document.querySelectorAll('.bnav-item').forEach(b=>b.classList.remove('active'));
+    const btn=document.getElementById(btnId);
+    if(btn)btn.classList.add('active');
+  }
+
+  </script>
+</body>
+</html>
