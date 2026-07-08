@@ -1,0 +1,12 @@
+# Cegah config.php (berisi API key) diakses langsung lewat browser
+<Files "config.php">
+    Require all denied
+</Files>
+
+# Kompatibilitas untuk Apache versi lama (XAMPP lama)
+<IfModule !mod_authz_core.c>
+    <Files "config.php">
+        Order allow,deny
+        Deny from all
+    </Files>
+</IfModule>
